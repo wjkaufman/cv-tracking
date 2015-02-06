@@ -8,13 +8,14 @@ import org.opencv.core.Mat;
 import org.opencv.highgui.VideoCapture;
 
 public class FaceDetectorRunner {
-	static final private int WIDTH = 640, HEIGHT = 480;
-	static final private double CAPTURE_SCALE = 0.5;
+	static final public int WIDTH = 640, HEIGHT = 480;
+	static final public double CAPTURE_SCALE = 0.4;
+	public static int FRAME = 0;
 	
 	public static void main(String arg[]) throws InterruptedException{
       // Load the native library.
       System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
-      //or ...     System.loadLibrary("opencv_java244");     
+      //or ...     System.loadLibrary("opencv_java244");
 
       //make the JFrame
       JFrame frame = new JFrame("WebCam Capture - Face detection");
@@ -22,7 +23,7 @@ public class FaceDetectorRunner {
    
       FaceDetector faceDetector = new FaceDetector();
       FacePanel facePanel = new FacePanel();
-      frame.setSize(WIDTH + 50,HEIGHT + 50); //give the frame some arbitrary size
+      frame.setSize(WIDTH, HEIGHT);
       frame.setBackground(Color.BLACK);
       frame.add(facePanel);
       frame.setVisible(true);
@@ -41,13 +42,14 @@ public class FaceDetectorRunner {
         	 webCam.read(webcam_image);
              if( !webcam_image.empty() )
               { 
-            	  Thread.sleep(10); /// This delay eases the computational load .. with little performance leakage
+            	  Thread.sleep(30); /// This delay eases the computational load .. with little performance leakage
                    // frame.setSize(webcam_image.width()*2+40,webcam_image.height()*2+60);
                    //Apply the classifier to the captured image
                    webcam_image = faceDetector.detect(webcam_image);
                   //Display the image
                    facePanel.matToBufferedImage(webcam_image);
                    facePanel.repaint();
+                   FaceDetectorRunner.FRAME ++;
               }
               else
               {
