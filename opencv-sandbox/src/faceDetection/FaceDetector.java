@@ -1,3 +1,4 @@
+package faceDetection;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
@@ -37,8 +38,7 @@ class FaceDetector {
           Imgproc.equalizeHist( mGrey, mGrey );  
           face_cascade.detectMultiScale(mGrey, faces);
           System.out.println(String.format("Detected %s faces", faces.toArray().length));  
-          for(Rect rect:faces.toArray())  
-          {  
+          for(Rect rect:faces.toArray()) {  
                Point center= new Point(rect.x + rect.width*0.5, rect.y + rect.height*0.5 );  
                //draw a blue eclipse around face
                Size s = new Size( rect.width*0.5, rect.height*0.5); //, 0, 0, 360, new Scalar( 0, 0, 255 )

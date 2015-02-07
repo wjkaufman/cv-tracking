@@ -1,3 +1,4 @@
+package faceDetection;
 /*  
  * Captures the camera stream with OpenCV
  * Search for the faces
