@@ -29,7 +29,7 @@ class FacePanel extends JPanel{
      private BufferedImage image;
      // Create a constructor method
      public FacePanel(){
-          super(); 
+          super();
      }
      /*
       * Converts/writes a Mat into a BufferedImage.
