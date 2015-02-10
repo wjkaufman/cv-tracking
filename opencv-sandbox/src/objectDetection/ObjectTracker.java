@@ -50,7 +50,7 @@ public class ObjectTracker {
 	
 	public static void main (String args) {
 		
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
 		ObjectTracker myTracker = new ObjectTracker();
 		
@@ -72,10 +72,6 @@ public class ObjectTracker {
 		thresholdImage = new Mat();
 		
 		VideoCapture capture = new VideoCapture();
-		
-		JFrame frame = new JFrame("Window");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		
 		while (true) {
 			
