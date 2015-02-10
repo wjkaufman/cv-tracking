@@ -68,7 +68,7 @@ public class ObjectTrackerRunner {
 					System.out.println("" + i + ": " + capture.get(i));
 				}
 				
-				while (capture.get(1) < capture.get(7) - 1) { // there may be problems here ***
+				while (capture.get(1) < capture.get(7) - 2) { // there may be problems here ***
 					capture.read(frame1);
 					Imgproc.cvtColor(frame1, grayImage1, Imgproc.COLOR_BGR2GRAY);
 					
@@ -104,9 +104,12 @@ public class ObjectTrackerRunner {
 					
 					panel.matToBufferedImage(frame1);
 					panel.repaint();
+					
+					FRAME++;
 				}
 			
 			capture.release();
+			FRAME = 0;
 			}
 		}// end of continuous while loop
 		

@@ -18,6 +18,7 @@ public class ObjectTracker {
 		boolean objectDetected = false;
 		Mat temp = new Mat();
 		thresholdImage.copyTo(temp);
+		Imgproc.cvtColor( temp, temp, Imgproc.COLOR_BGR2GRAY);
 		
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		Mat hierarchy = new Mat();
