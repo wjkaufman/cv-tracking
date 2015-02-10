@@ -1,20 +1,20 @@
 package objectDetection;
 
-import java.awt.BorderLayout;
+
 import java.awt.Color;
-
 import javax.swing.JFrame;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
+import org.opencv.imgproc.Imgproc;
 
 public class ObjectTrackerRunner {
-	static final public int WIDTH = 640, HEIGHT = 480;
-	static final public double CAPTURE_SCALE = 0.4;
+	public static final int WIDTH = 640, HEIGHT = 480;
+	public static final double CAPTURE_SCALE = 0.4;
 	public static int FRAME = 0;
 	
-	public static void main(String arg[]) throws InterruptedException{
+	public static void main(String arg[]) {
 		
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
@@ -30,34 +30,86 @@ public class ObjectTrackerRunner {
 		frame.add(panel);
 		frame.setVisible(true);
 		
-		//Open and Read from the video stream
-		Mat webcam_image=new Mat();
-		VideoCapture capture =new VideoCapture(0);
+		boolean objectDetected = false;
+		boolean debugMode = false;
+		boolean trackingEnabled = true;
+		boolean pause = false;
 		
-		capture.set(3, WIDTH * CAPTURE_SCALE);
-		capture.set(4, HEIGHT * CAPTURE_SCALE);
- 
-        if( capture.isOpened()) {
-        	Thread.sleep(500); /// This one-time delay allows the Webcam to initialize itself
-        	while( true ) {
-        		capture.read(webcam_image);
-        		if( !webcam_image.empty() ) {
-        			Thread.sleep(30); /// This delay eases the computational load .. with little performance leakage
-        			// frame.setSize(webcam_image.width()*2+40,webcam_image.height()*2+60);
-        			//Apply the classifier to the captured image
-        			webcam_image = tracker.detect(webcam_image);
-        			//Display the image
-        			panel.matToBufferedImage(webcam_image);
-        			panel.repaint();
-        			ObjectTrackerRunner.FRAME ++;
-        		}
-        		else {
-        			System.out.println(" --(!) No captured frame from webcam !"); 
-        			break; 
-        		}
-        	}
-        	}
-        capture.release(); //release the capture
-    } //end main 
+		Mat frame1, frame2;
+		Mat grayImage1, grayImage2;
+		Mat differenceImage;
+		Mat thresholdImage;
+		
+		frame1 = new Mat();
+		frame2 = new Mat();
+		grayImage1 = new Mat();
+		grayImage2 = new Mat();
+		differenceImage = new Mat();
+		thresholdImage = new Mat();
+		
+		VideoCapture capture = new VideoCapture();
+		
+		while (true) {
+			capture.open("bouncingBall.avi"); // *** will need to update this
+			
+			if (!capture.isOpened()) {
+				System.out.println("VideoCapture error");
+				
+			}
+			else {
+				try {
+					Thread.sleep(500);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				for (int i = 0; i < 38; i++) {
+					System.out.println("" + i + ": " + capture.get(i));
+				}
+				
+				while (capture.get(1) < capture.get(7) - 1) { // there may be problems here ***
+					capture.read(frame1);
+					Imgproc.cvtColor(frame1, grayImage1, Imgproc.COLOR_BGR2GRAY);
+					
+					capture.read(frame2);
+					Imgproc.cvtColor(frame2, grayImage2, Imgproc.COLOR_BGR2GRAY);
+					
+					Core.absdiff(frame1, frame2, differenceImage);
+					Imgproc.threshold(differenceImage, thresholdImage, ObjectTracker.SENSITIVITY_VALUE,
+								      255, Imgproc.THRESH_BINARY);
+					
+					if (debugMode) {
+						//can add things here later
+					}
+					else {
+						//may need to destroy the other windows
+					}
+					
+					Size mySize = new Size(ObjectTracker.BLUR_SIZE, ObjectTracker.BLUR_SIZE);
+					Imgproc.blur(thresholdImage, thresholdImage, mySize);
+					Imgproc.threshold(thresholdImage, thresholdImage, ObjectTracker.SENSITIVITY_VALUE,
+						      255, Imgproc.THRESH_BINARY);
+					
+					if (debugMode) {
+						//more stuff here that I'll add later
+					}
+					else {
+						//yep, more stuff
+					}
+					
+					if (trackingEnabled) {
+						tracker.searchForMovement(thresholdImage, frame1);
+					}
+					
+					panel.matToBufferedImage(frame1);
+					panel.repaint();
+				}
+			
+			capture.release();
+			}
+		}// end of continuous while loop
+		
+	} //end of main
 	
-}
+} //end of runner

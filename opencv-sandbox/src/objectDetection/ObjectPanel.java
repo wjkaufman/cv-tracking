@@ -52,10 +52,10 @@ class ObjectPanel extends JPanel{
           super.paintComponent(g);
           if (this.image==null) return;
         
-          g.drawImage(this.image, 0, 0, ObjectDetectorRunner.WIDTH, ObjectDetectorRunner.HEIGHT, null);
+          g.drawImage(this.image, 0, 0, ObjectTrackerRunner.WIDTH, ObjectTrackerRunner.HEIGHT, null);
           g.setColor(Color.WHITE);
           g.setFont(new Font("", 0, 20));
-          g.drawString("Frame: " + ObjectDetectorRunner.FRAME, 50, 50);
+          g.drawString("Frame: " + ObjectTrackerRunner.FRAME, 50, 50);
      }
       
 }  
