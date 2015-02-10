@@ -10,7 +10,7 @@ import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 
 public class ObjectTrackerRunner {
-	public static final int WIDTH = 640, HEIGHT = 480;
+	public static final int WIDTH = 720, HEIGHT = 480;
 	public static final double CAPTURE_SCALE = 0.4;
 	public static int FRAME = 0;
 	

@@ -21,7 +21,7 @@ public class ObjectTracker {
 		
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		Mat hierarchy = new Mat();
-		Imgproc.findContours(temp, contours, hierarchy, 0, 1);
+		Imgproc.findContours(temp, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 		
 		if (contours.size() > 0) objectDetected = true;
 		else objectDetected = false;
