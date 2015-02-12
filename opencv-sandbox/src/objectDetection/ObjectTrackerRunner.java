@@ -11,7 +11,7 @@ import org.opencv.imgproc.Imgproc;
 
 public class ObjectTrackerRunner {
 	public static final int WIDTH = 720, HEIGHT = 480;
-	public static final double CAPTURE_SCALE = 0.4;
+	public static final double CAPTURE_SCALE = 1;
 	public static int FRAME = 0;
 	
 	public static void main(String arg[]) {
@@ -47,72 +47,73 @@ public class ObjectTrackerRunner {
 		differenceImage = new Mat();
 		thresholdImage = new Mat();
 		
-		VideoCapture capture = new VideoCapture();
+		VideoCapture capture = new VideoCapture(0);
 		
-		while (true) {
-			capture.open("bouncingBall.avi"); // *** will need to update this
-			
-			if (!capture.isOpened()) {
-				System.out.println("VideoCapture error");
-				
+		capture.set(3, WIDTH * CAPTURE_SCALE);
+		capture.set(4, HEIGHT * CAPTURE_SCALE);
+		
+		if (capture.isOpened()) {
+			try {
+				Thread.sleep(500);
 			}
-			else {
-				try {
-					Thread.sleep(500);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			while (true) {
 				
-				for (int i = 0; i < 38; i++) {
+				
+				/* for (int i = 0; i < 38; i++) {
 					System.out.println("" + i + ": " + capture.get(i));
+				} */
+				
+				capture.read(frame1);
+				Imgproc.cvtColor(frame1, grayImage1, Imgproc.COLOR_BGR2GRAY);
+				
+				//may need to add a Thread.sleep(20) here
+				
+				capture.read(frame2);
+				Imgproc.cvtColor(frame2, grayImage2, Imgproc.COLOR_BGR2GRAY);
+				
+				Core.absdiff(frame1, frame2, differenceImage);
+				Imgproc.threshold(differenceImage, thresholdImage, ObjectTracker.SENSITIVITY_VALUE,
+							      255, Imgproc.THRESH_BINARY);
+				
+				if (debugMode) {
+					//can add things here later
+				}
+				else {
+					//may need to destroy the other windows
 				}
 				
-				while (capture.get(1) < capture.get(7) - 2) { // there may be problems here ***
-					capture.read(frame1);
-					Imgproc.cvtColor(frame1, grayImage1, Imgproc.COLOR_BGR2GRAY);
-					
-					capture.read(frame2);
-					Imgproc.cvtColor(frame2, grayImage2, Imgproc.COLOR_BGR2GRAY);
-					
-					Core.absdiff(frame1, frame2, differenceImage);
-					Imgproc.threshold(differenceImage, thresholdImage, ObjectTracker.SENSITIVITY_VALUE,
-								      255, Imgproc.THRESH_BINARY);
-					
-					if (debugMode) {
-						//can add things here later
-					}
-					else {
-						//may need to destroy the other windows
-					}
-					
-					Size mySize = new Size(ObjectTracker.BLUR_SIZE, ObjectTracker.BLUR_SIZE);
-					Imgproc.blur(thresholdImage, thresholdImage, mySize);
-					Imgproc.threshold(thresholdImage, thresholdImage, ObjectTracker.SENSITIVITY_VALUE,
-						      255, Imgproc.THRESH_BINARY);
-					
-					if (debugMode) {
-						//more stuff here that I'll add later
-					}
-					else {
-						//yep, more stuff
-					}
-					
-					if (trackingEnabled) {
-						tracker.searchForMovement(thresholdImage, frame1);
-					}
-					
-					panel.matToBufferedImage(frame1);
-					panel.repaint();
-					
-					FRAME++;
+				Size mySize = new Size(ObjectTracker.BLUR_SIZE, ObjectTracker.BLUR_SIZE);
+				Imgproc.blur(thresholdImage, thresholdImage, mySize);
+				Imgproc.threshold(thresholdImage, thresholdImage, ObjectTracker.SENSITIVITY_VALUE,
+					      255, Imgproc.THRESH_BINARY);
+				
+				if (debugMode) {
+					//more stuff here that I'll add later
 				}
-			
-			capture.release();
-			FRAME = 0;
+				else {
+					//yep, more stuff
+				}
+				
+				if (trackingEnabled) {
+					tracker.searchForMovement(thresholdImage, frame1);
+				}
+				
+				panel.matToBufferedImage(frame1);
+				panel.repaint();
+				
+				FRAME++;
+				
 			}
-		}// end of continuous while loop
+		}
 		
+		else {
+			System.out.println("Problem initializing videocapture");
+		}
+
 	} //end of main
 	
 } //end of runner
