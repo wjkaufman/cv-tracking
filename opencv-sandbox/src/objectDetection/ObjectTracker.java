@@ -9,7 +9,7 @@ import org.opencv.core.*;
 
 public class ObjectTracker {
 	public final static int SENSITIVITY_VALUE = 20;
-	public final static int BLUR_SIZE = 10;
+	public final static int BLUR_SIZE = 30;
 	int[] theObject = {0,0};
 	
 	Rect objectBoundingRectangle = new Rect(0,0,0,0);
