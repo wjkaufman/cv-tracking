@@ -3,6 +3,7 @@ package graphics;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,11 +24,14 @@ import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-class GraphicsPanel extends JPanel implements MouseListener{
+class GraphicsPanel extends JPanel implements MouseListener, MouseMotionListener{
 	
     private static final long serialVersionUID = 1L;
     private BufferedImage image;
-    private int startClickX, startClickY, endClickX, endClickY;
+    private static int startClickX, startClickY, endClickX, endClickY;
+    private static int upperClickX, upperClickY;
+    
+    private static boolean drawMouseBox = false;
      
     // Create a constructor method
     public GraphicsPanel(){
@@ -50,6 +54,7 @@ class GraphicsPanel extends JPanel implements MouseListener{
          }
       return true; // Successful
     }
+    
     public void paintComponent(Graphics g){
          super.paintComponent(g);
          if (this.image==null) return;
@@ -58,42 +63,86 @@ class GraphicsPanel extends JPanel implements MouseListener{
          g.setColor(Color.WHITE);
          g.setFont(new Font("", 0, 20));
          g.drawString("Frame: " + GraphicsTester.FRAME, 50, 50);
+         
+         if (drawMouseBox) {
+        	 g.setColor(new Color(75, 150, 250, 128));
+        	 g.fillRect(10, 10, 10, 10);
+//        	 this.printClickArea();
+        	 
+        	 g.fillRect(upperClickX, upperClickY,
+        			    Math.abs(startClickX - endClickX), Math.abs(startClickY - endClickY));
+         }
     }
     
     public void printClickArea() {
-    	System.out.println("start: " + this.startClickX + ", " + 
-    					   this.startClickY);
-    	System.out.println("end: " + this.endClickX + ", " + 
-				   this.endClickY);
-
+    	System.out.println("start: " + startClickX + ", " + 
+    					   startClickY);
+    	System.out.println("end: " + endClickX + ", " + 
+				   endClickY);
+    }
+    
+    public static void getDragArea() {
+    	if (startClickX < endClickX) {
+    		upperClickX = startClickX;
+    	}
+    	else upperClickX = endClickX;
+    	
+    	if (startClickY < endClickY) {
+    		upperClickY = startClickY;
+    	}
+    	else upperClickY = endClickY;
     }
     
 	@Override
 	public void mouseClicked(MouseEvent event) {
-		System.out.println("Mouse clicked, location: " + event.getX() +
-						   ", " + event.getY());
+//		System.out.println("Mouse clicked, location: " + event.getX() +
+//						   ", " + event.getY());
 		
 	}
 	@Override
 	public void mouseEntered(MouseEvent event) {
+//		System.out.println("mouse entered");
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void mouseExited(MouseEvent event) {
+//		System.out.println("mouse exited");
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void mousePressed(MouseEvent event) {
-		this.startClickX = event.getX();
-		this.startClickY = event.getY();
+		this.drawMouseBox = true;
+		System.out.println("mouse pressed");
+		startClickX = event.getX();
+		startClickY = event.getY();
+		endClickX = startClickX;
+		endClickY = startClickY;
+		this.printClickArea();
 	}
 	@Override
 	public void mouseReleased(MouseEvent event) {
-		this.endClickX = event.getX();
-		this.endClickY = event.getY();
+		this.drawMouseBox = false;
+		System.out.println("mouse released");
 		this.printClickArea();
+		
+	}
+	@Override
+	public void mouseDragged(MouseEvent event) {
+//		System.out.println("mouse dragged");
+		endClickX = event.getX();
+		endClickY = event.getY();
+		
+		getDragArea();
+		
+//		this.drawMouseBox = true;
+		
+	}
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
       
 }

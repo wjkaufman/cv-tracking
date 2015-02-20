@@ -26,6 +26,7 @@ public class GraphicsTester {
 		
 		GraphicsPanel panel = new GraphicsPanel();
 		panel.addMouseListener(new GraphicsPanel());
+		panel.addMouseMotionListener(new GraphicsPanel());
 		
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setBackground(Color.BLACK);
