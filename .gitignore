@@ -1,3 +1,6 @@
 *.DS_Store
 *.class
 *.avi
+/bin/
+*.classpath
+*.project

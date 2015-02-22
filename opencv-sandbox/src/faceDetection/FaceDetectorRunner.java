@@ -9,8 +9,8 @@ import org.opencv.core.Mat;
 import org.opencv.highgui.VideoCapture;
 
 public class FaceDetectorRunner {
-	static final public int WIDTH = 640, HEIGHT = 480;
-	static final public double CAPTURE_SCALE = 0.4;
+	static final public int WIDTH = 1200, HEIGHT = 1000;
+	static final public double CAPTURE_SCALE = 0.2;
 	public static int FRAME = 0;
 	
 	public static void main(String arg[]) throws InterruptedException{

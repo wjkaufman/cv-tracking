@@ -16,10 +16,10 @@ class FaceDetector {
          // face_cascade=new CascadeClassifier("./cascades/lbpcascade_frontalface_alt.xml");  
          //..didn't have not much luck with the lbp
          
-        face_cascade=new CascadeClassifier("./cascades/haarcascade_frontalface_alt.xml"); 
+        face_cascade = new CascadeClassifier("./cascades/haarcascade_frontalface_alt.xml"); 
           if(face_cascade.empty())  
           {  
-               System.out.println("--(!)Error loading A\n");
+               System.out.println("--(!)Error loading haarcascade");
                 return;
           }  
           else  
