@@ -1,4 +1,4 @@
-package objectDetection;
+package motionTracking;
 
 
 import java.awt.Color;
@@ -9,7 +9,7 @@ import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 
-public class ObjectTrackerWebcam {
+public class MotionTrackerWebcam {
 	public static final int WIDTH = 720, HEIGHT = 480;
 	public static final double CAPTURE_SCALE = 1;
 	public static int FRAME = 0;
@@ -22,8 +22,8 @@ public class ObjectTrackerWebcam {
 		JFrame frame = new JFrame("WebCam Capture - Object Tracking");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		ObjectTracker tracker = new ObjectTracker();
-		ObjectPanel panel = new ObjectPanel();
+		MotionTracker tracker = new MotionTracker();
+		GraphicsPanel panel = new GraphicsPanel();
 		
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setBackground(Color.BLACK);
@@ -76,7 +76,7 @@ public class ObjectTrackerWebcam {
 				Imgproc.cvtColor(frame2, grayImage2, Imgproc.COLOR_BGR2GRAY);
 				
 				Core.absdiff(frame1, frame2, differenceImage);
-				Imgproc.threshold(differenceImage, thresholdImage, ObjectTracker.SENSITIVITY_VALUE,
+				Imgproc.threshold(differenceImage, thresholdImage, MotionTracker.SENSITIVITY_VALUE,
 							      255, Imgproc.THRESH_BINARY);
 				
 				if (debugMode) {
@@ -86,10 +86,10 @@ public class ObjectTrackerWebcam {
 					//may need to destroy the other windows
 				}
 				
-				Size mySize = new Size(ObjectTracker.BLUR_SIZE, ObjectTracker.BLUR_SIZE);
+				Size mySize = new Size(MotionTracker.BLUR_SIZE, MotionTracker.BLUR_SIZE);
 				Imgproc.blur(thresholdImage, thresholdImage, mySize);
-				Imgproc.threshold(thresholdImage, thresholdImage, ObjectTracker.SENSITIVITY_VALUE,
-					      255, Imgproc.THRESH_BINARY);
+				Imgproc.threshold(thresholdImage, thresholdImage, MotionTracker.SENSITIVITY_VALUE,
+					      255, Imgproc.THRESH_BINARY); //is this reduntant from above?
 				
 				if (debugMode) {
 					//more stuff here that I'll add later

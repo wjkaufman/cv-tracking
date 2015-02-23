@@ -1,4 +1,4 @@
-package objectDetection;
+package motionTracking;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.core.*;
 
 
-public class ObjectTracker {
+public class MotionTracker {
 	public final static int SENSITIVITY_VALUE = 20;
 	public final static int BLUR_SIZE = 30;
 	int[] theObject = {0,0};

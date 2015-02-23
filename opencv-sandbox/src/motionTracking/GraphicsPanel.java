@@ -1,4 +1,4 @@
-package objectDetection;
+package motionTracking;
 /*  
  * Captures the camera stream with OpenCV
  * Search for the faces
@@ -24,11 +24,11 @@ import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-class ObjectPanel extends JPanel{
+class GraphicsPanel extends JPanel{
      private static final long serialVersionUID = 1L;
      private BufferedImage image;
      // Create a constructor method
-     public ObjectPanel(){
+     public GraphicsPanel(){
           super();
      }
      /*
@@ -52,10 +52,10 @@ class ObjectPanel extends JPanel{
           super.paintComponent(g);
           if (this.image==null) return;
         
-          g.drawImage(this.image, 0, 0, ObjectTrackerRunner.WIDTH, ObjectTrackerRunner.HEIGHT, null);
+          g.drawImage(this.image, 0, 0, MotionTrackerRunner.WIDTH, MotionTrackerRunner.HEIGHT, null);
           g.setColor(Color.WHITE);
           g.setFont(new Font("", 0, 20));
-          g.drawString("Frame: " + ObjectTrackerRunner.FRAME, 50, 50);
+          g.drawString("Frame: " + MotionTrackerRunner.FRAME, 50, 50);
      }
       
 }  
