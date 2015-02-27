@@ -81,9 +81,7 @@ public class ColorTracker {
 		Mat hierarchy = new Mat();
 		Imgproc.findContours(temp, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 		
-		double refArea = 0;
-		
-		int numObjects = 0;
+		int numObjects;
 		
 		if (contours.size() > 0) {
 			objectFound = true;
@@ -94,7 +92,7 @@ public class ColorTracker {
 		if (objectFound) {
 			List<MatOfPoint> largestContourVec = new ArrayList<MatOfPoint>();
 			
-			largestContourVec.add(contours.get(contours.size()-1));
+			largestContourVec.add(contours.get(contours.size() - 1)); //modifying this point
 			
 			Rect objectBoundingRectangle = Imgproc.boundingRect(largestContourVec.get(0));
 			x = objectBoundingRectangle.x + objectBoundingRectangle.width / 2;
@@ -104,8 +102,7 @@ public class ColorTracker {
 			System.out.println("tracking object\n");
 			System.out.println("x: " + x + ", y: " + y);
 		}
-		else System.out.println("object not found, "
-				+ "too much noise.  Adjust filter?");
+		else System.out.println("object not found");
 		
 	}
 }
