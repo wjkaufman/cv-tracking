@@ -1,9 +1,16 @@
 package colorTracking;
 
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,40 +19,49 @@ import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 
-public class ColorTrackerRunner {
-	public static final int WIDTH = 720, HEIGHT = 480;
-	public static final double CAPTURE_SCALE = 1;
-	public static int FRAME = 0;
+public class ColorTrackerRunner implements ActionListener{
 	
-	public static void main(String arg[]) {
-		
+	GraphicsFrame window1;
+	GraphicsFrame window2;
+	
+	HSVFrame hsv_min;
+	HSVFrame hsv_max;
+	
+	ColorTracker tracker;
+	
+	Mat videoFrame;
+	Mat hsvFrame;
+	Mat threshFrame;
+	
+	VideoCapture capture;
+	
+	public ColorTrackerRunner() {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
 		//make the JFrame
-		JFrame frame = new JFrame("WebCam Capture - Object Tracking");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window1 = new GraphicsFrame("webcam capture - color tracking");
+		window2 = new GraphicsFrame("webcam capture - threshold");
 		
-		ColorTracker tracker = new ColorTracker();
-		GraphicsPanel panel = new GraphicsPanel();
+		hsv_min = new HSVFrame(HSVFrame.HSV_MIN, "min hsv", 0, 0, 0);
+		hsv_max = new HSVFrame(HSVFrame.HSV_MAX, "max hsv", 360, 255, 255);
+		hsv_min.addActionListener(this);
+		hsv_max.addActionListener(this);
 		
-		frame.setSize(WIDTH, HEIGHT);
-		frame.setBackground(Color.BLACK);
-		frame.add(panel);
-		frame.setVisible(true);
-		
-		Mat videoFrame;
-		Mat hsvImage;
-		Mat threshold;
+		tracker = new ColorTracker();
 		
 		videoFrame = new Mat();
-		hsvImage = new Mat();
-		threshold = new Mat();
+		hsvFrame = new Mat();
+		threshFrame = new Mat();
 		
-		VideoCapture capture = new VideoCapture(0);
+		capture = new VideoCapture(0);
 		
-		capture.set(3, WIDTH * CAPTURE_SCALE);
-		capture.set(4, HEIGHT * CAPTURE_SCALE);
+		capture.set(3, GraphicsFrame.WIDTH * GraphicsFrame.CAPTURE_SCALE);
+		capture.set(4, GraphicsFrame.HEIGHT * GraphicsFrame.CAPTURE_SCALE);
 		
+		this.start();
+	}
+	
+	public void start() {
 		if (capture.isOpened()) {
 			try {
 				Thread.sleep(500);
@@ -57,23 +73,24 @@ public class ColorTrackerRunner {
 			while (true) {
 				capture.read(videoFrame);
 				//converts videoFrame to hsv colorspace
-				Imgproc.cvtColor(videoFrame, hsvImage, Imgproc.COLOR_BGR2HSV);
+				Imgproc.cvtColor(videoFrame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 				
 				//what does this do?
-				Core.inRange(hsvImage, tracker.getMinHSV(), tracker.getMaxHSV(), threshold);
+				Core.inRange(hsvFrame, tracker.getMinHSV(), tracker.getMaxHSV(), threshFrame);
 				
 				if (tracker.useMorphOps()) {
-					tracker.morphOps(threshold);
+					tracker.morphOps(threshFrame);
 				}
 				
 				if (true) { //change to "if tracking is on"
-					tracker.trackColor(threshold, videoFrame);
+					tracker.trackColor(threshFrame, videoFrame);
 				}
 				
-				panel.matToBufferedImage(videoFrame);
-				panel.repaint();
+				window1.updateImage(videoFrame);
+				window2.updateImage(threshFrame);
 				
-				FRAME++;
+				
+				GraphicsFrame.FRAME++;
 				
 			}
 		}
@@ -81,7 +98,24 @@ public class ColorTrackerRunner {
 		else {
 			System.out.println("Problem initializing videocapture");
 		}
-
+	}
+	
+	public static void main(String arg[]) {
+		
+		ColorTrackerRunner runner = new ColorTrackerRunner();
+		
 	} //end of main
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() instanceof HSVFrame) {
+			if (e.getSource() == hsv_min) {
+				tracker.setMinHSV(hsv_min.getH(), hsv_min.getS(), hsv_min.getV());
+			}
+			else if (e.getSource() == hsv_max) {
+				tracker.setMaxHSV(hsv_max.getH(), hsv_max.getS(), hsv_max.getV());
+			}
+		}
+	}
 	
 } //end of runner

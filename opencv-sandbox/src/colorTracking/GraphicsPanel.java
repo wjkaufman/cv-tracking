@@ -48,14 +48,23 @@ class GraphicsPanel extends JPanel{
           }
        return true; // Successful
      }
+     
+     public boolean updateImage(Mat matrix) {
+    	 if (matToBufferedImage(matrix)) {
+    		 this.repaint();
+    		 return true;
+    	 }
+    	 else return false;
+     }
+     
      public void paintComponent(Graphics g){
           super.paintComponent(g);
           if (this.image==null) return;
         
-          g.drawImage(this.image, 0, 0, ColorTrackerRunner.WIDTH, ColorTrackerRunner.HEIGHT, null);
+          g.drawImage(this.image, 0, 0, GraphicsFrame.WIDTH, GraphicsFrame.HEIGHT, null);
           g.setColor(Color.WHITE);
           g.setFont(new Font("", 0, 20));
-          g.drawString("Frame: " + ColorTrackerRunner.FRAME, 50, 50);
+          g.drawString("Frame: " + GraphicsFrame.FRAME, 50, 50);
      }
       
 }  
