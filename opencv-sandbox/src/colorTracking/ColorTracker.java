@@ -92,29 +92,20 @@ public class ColorTracker {
 		else objectFound = false;
 		
 		if (objectFound) {
-			if (numObjects < MAX_NUM_OBJECTS) {
-				for (int index = 0; index < numObjects; index ++) { //may break here
-					Moments moment = Imgproc.moments(contours.get(index));
-					double area = moment.get_m00();
-					
-					if (area > MIN_OBJECT_AREA && area < MAX_OBJECT_AREA && area > refArea) {
-						x = moment.get_m10();
-						y = moment.get_m01();
-						
-						objectFound = true;
-						refArea = area;
-					}
-					else objectFound = false;
-				}
-				
-				if (objectFound) {
-					Core.putText(cameraFeed, "tracking object", new Point(x,y), 2, 1, new Scalar(0,255,0), 2);
-					System.out.println("tracking object\n");
-					System.out.println("x: " + x + ", y: " + y);
-				}
-				else System.out.println("object not found, "
-						+ "too much noise.  Adjust filter?");
-			}
+			List<MatOfPoint> largestContourVec = new ArrayList<MatOfPoint>();
+			
+			largestContourVec.add(contours.get(contours.size()-1));
+			
+			Rect objectBoundingRectangle = Imgproc.boundingRect(largestContourVec.get(0));
+			x = objectBoundingRectangle.x + objectBoundingRectangle.width / 2;
+			y = objectBoundingRectangle.y + objectBoundingRectangle.height / 2;
+			
+			Core.putText(cameraFeed, "tracking object", new Point(x,y), 2, 1, new Scalar(0,255,0), 2);
+			System.out.println("tracking object\n");
+			System.out.println("x: " + x + ", y: " + y);
 		}
+		else System.out.println("object not found, "
+				+ "too much noise.  Adjust filter?");
+		
 	}
 }

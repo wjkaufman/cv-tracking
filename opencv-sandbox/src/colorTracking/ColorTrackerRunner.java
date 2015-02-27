@@ -89,7 +89,6 @@ public class ColorTrackerRunner implements ActionListener{
 				window1.updateImage(videoFrame);
 				window2.updateImage(threshFrame);
 				
-				
 				GraphicsFrame.FRAME++;
 				
 			}
