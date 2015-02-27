@@ -8,8 +8,8 @@ import org.opencv.core.*;
 
 
 public class MotionTracker {
-	public final static int SENSITIVITY_VALUE = 20;
-	public final static int BLUR_SIZE = 30;
+	public static final int SENSITIVITY_VALUE = 20;
+	public static final int BLUR_SIZE = 30;
 	int[] theObject = {0,0};
 	
 	Rect objectBoundingRectangle = new Rect(0,0,0,0);
