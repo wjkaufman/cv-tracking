@@ -11,8 +11,8 @@ import javax.swing.JFrame;
 import org.opencv.core.Mat;
 
 public class GraphicsFrame extends JFrame{
-	public static final int WIDTH = 720, HEIGHT = 480;
-	public static final double CAPTURE_SCALE = .8;
+	public static final int WIDTH = 600, HEIGHT = 400;
+	public static final double CAPTURE_SCALE = 1;
 	public static int FRAME = 0;
 	
 	private GraphicsPanel panel;

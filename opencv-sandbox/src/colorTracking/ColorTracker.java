@@ -17,20 +17,22 @@ public class ColorTracker {
 	private int V_MIN = 0;
 	private int V_MAX = 255;
 	
-	private Rect myROI = new Rect(0,0,0,0);
-	
-	private double x;
-	private double y;
+	private List<Rect> myROIs = new ArrayList<Rect>();
 	
 	//max number of objects to be tracked via this method
-	private final int MAX_NUM_OBJECTS=50;
+	private final int MAX_NUM_OBJECTS = 7;
 	
 	private boolean objectFound = false;
 	private boolean useMorphOps = true;
 	
 	//min and max object area to be tracked
-	private final int MIN_OBJECT_AREA = 20*20;
-	private final int MAX_OBJECT_AREA = (int)(GraphicsFrame.WIDTH*GraphicsFrame.HEIGHT / 1.5);
+	private final double MIN_OBJECT_AREA = 700;
+	private final double MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT;
+	
+	public ColorTracker () {
+		Rect initRect = new Rect(0, 0, GraphicsFrame.WIDTH, GraphicsFrame.HEIGHT);
+		myROIs.add(initRect);
+	}
 	
 	public Scalar getMinHSV() {
 		return new Scalar(H_MIN, S_MIN, V_MIN);
@@ -67,67 +69,75 @@ public class ColorTracker {
 		Imgproc.dilate(thresh, thresh, dilateElement);
 	}
 	
+	public void resetMyROIs () {
+		myROIs.clear();
+	}
+	
 	public void trackColor(Mat thresholdImage, Mat cameraFeed) {
 		Mat temp = new Mat();
 		thresholdImage.copyTo(temp);
 		
-		System.out.println("myROI data 0: " + myROI.x + ", " + myROI.y +
-						   ", " + myROI.width + ", " + myROI.height);
+		resetMyROIs();
 		
-		if (myROI.area() > 0) { //not sure if this will work, but adds region of interest to mat
-			temp = new Mat(temp, myROI);
-		}
-		
-		System.out.println("myROI data 1: " + myROI.x + ", " + myROI.y +
-				   ", " + myROI.width + ", " + myROI.height);
+		//System.out.println("printing myROI 0: " + myROIs.get(0));
 		
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		Mat hierarchy = new Mat();
 		Imgproc.findContours(temp, contours, hierarchy, Imgproc.RETR_EXTERNAL,
 							 Imgproc.CHAIN_APPROX_SIMPLE);
 		
-		int numObjects;
 		
 		if (contours.size() > 0) {
 			objectFound = true;
-			numObjects = contours.size();
 		}
 		else objectFound = false;
 		
 		if (objectFound) {
-			List<MatOfPoint> largestContourVec = new ArrayList<MatOfPoint>();
+			//List<MatOfPoint> largestContourVec = new ArrayList<MatOfPoint>();
+			//largestContourVec.add(contours.get(0)); //add a for loops here?
 			
-			largestContourVec.add(contours.get(contours.size() - 1));
+			double largestArea = 0;
+			double smallestArea = 100000000;
 			
-			System.out.println("myROI data 2: " + myROI.x + ", " + myROI.y +
-					   ", " + myROI.width + ", " + myROI.height);
+			int numObjects = 0;
 			
-			myROI = Imgproc.boundingRect(largestContourVec.get(0));
-			//this appears to be constricting the myROI by 2 in width and height
-			myROI.width  += 2;
-			myROI.height += 2; //stopped working here
+			for (MatOfPoint mop : contours) {
+				Rect nextRect = Imgproc.boundingRect(mop);
+				if (nextRect.area() > MIN_OBJECT_AREA && nextRect.area() < MAX_OBJECT_AREA
+					&& numObjects < MAX_NUM_OBJECTS) {
+					if (nextRect.area() > largestArea) largestArea = nextRect.area();
+					if (nextRect.area() < smallestArea) smallestArea = nextRect.area();
+					myROIs.add(nextRect);
+					numObjects++;
+				}
+			}
 			
-			x = myROI.x + myROI.width / 2;
-			y = myROI.y + myROI.height / 2;
+			System.out.println("===large-area: " + largestArea);
+			System.out.println("===small-area: " + smallestArea);
 			
-			System.out.println("myROI data 3: " + myROI.x + ", " + myROI.y +
-					   ", " + myROI.width + ", " + myROI.height);
-						
 			//draws text and bounding rectangle to image
-			Core.putText(cameraFeed, "tracking object", new Point(x,y), 2,
-						 1 * GraphicsFrame.CAPTURE_SCALE, new Scalar(0,255,0),
-						 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
-			Core.rectangle(cameraFeed, new Point(myROI.x, myROI.y),
-						   new Point(myROI.x + myROI.width, myROI.y + myROI.height), new Scalar(0,255,0));
 			
-			System.out.println("tracking object\n");
-			System.out.println("x: " + x + ", y: " + y);
+			int rectCounter = 0;
+			
+			for (Rect boundingRect : myROIs) {
+				
+				double x = boundingRect.x + boundingRect.width / 2;
+				double y = boundingRect.y + boundingRect.height / 2;
+				
+				Core.putText(cameraFeed, "tracking object: " + rectCounter, new Point(x,y), 2,
+						 .67 * GraphicsFrame.CAPTURE_SCALE, new Scalar(0,255,0),
+						 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
+				
+				Core.rectangle(cameraFeed, new Point(boundingRect.x, boundingRect.y),
+						   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),
+						   	   new Scalar(0,255,0));
+				
+				rectCounter++;
+			}
+			
+			
+			
+			System.out.println("tracking " + myROIs.size() + " object(s)\n");
 		}
-		else {
-			System.out.println("object not found");
-			double[] vals = {0,0,0,0};
-			myROI.set(vals);
-		}
-		
 	}
 }
