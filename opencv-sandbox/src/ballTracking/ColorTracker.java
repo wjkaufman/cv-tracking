@@ -17,6 +17,8 @@ public class ColorTracker {
 	private int V_MIN = 0;
 	private int V_MAX = 255;
 	
+	private int numObjects = 0;
+	
 	private List<Rect> myROIs = new ArrayList<Rect>();
 	
 	//max number of objects to be tracked via this method
@@ -30,8 +32,8 @@ public class ColorTracker {
 	private final double MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT;
 	
 	public ColorTracker () {
-		Rect initRect = new Rect(0, 0, GraphicsFrame.WIDTH, GraphicsFrame.HEIGHT);
-		myROIs.add(initRect);
+//		Rect initRect = new Rect(0, 0, GraphicsFrame.WIDTH, GraphicsFrame.HEIGHT);
+//		myROIs.add(initRect);
 	}
 	
 	public Scalar getMinHSV() {
@@ -87,9 +89,7 @@ public class ColorTracker {
 							 Imgproc.CHAIN_APPROX_SIMPLE);
 		
 		
-		if (contours.size() > 0) {
-			objectFound = true;
-		}
+		if (contours.size() > 0) objectFound = true;
 		else objectFound = false;
 		
 		if (objectFound) {
@@ -99,7 +99,7 @@ public class ColorTracker {
 			double largestArea = 0;
 			double smallestArea = 100000000;
 			
-			int numObjects = 0;
+			numObjects = 0;
 			
 			for (MatOfPoint mop : contours) {
 				Rect nextRect = Imgproc.boundingRect(mop);
@@ -131,12 +131,8 @@ public class ColorTracker {
 				Core.rectangle(cameraFeed, new Point(boundingRect.x, boundingRect.y),
 						   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),
 						   	   new Scalar(0,255,0));
-				
 				rectCounter++;
 			}
-			
-			
-			
 			System.out.println("tracking " + myROIs.size() + " object(s)\n");
 		}
 	}
