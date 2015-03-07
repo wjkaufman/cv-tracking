@@ -13,10 +13,15 @@ public class MotionTracker {
 	
 	private int numObjects = 0;
 	private int MAX_NUM_OBJECTS = 10;
-	private int MIN_OBJECT_AREA = 700;
-	private int MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT;
+	private int MIN_OBJECT_AREA = 600;
+	private int MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT / 2;
 	
+	private Mat difference, threshold;
 	
+	public MotionTracker() {
+		difference = new Mat();
+		threshold = new Mat();
+	}
 	
 	private List<Rect> myROIs = new ArrayList<Rect>();
 	
@@ -24,10 +29,35 @@ public class MotionTracker {
 		myROIs.clear();
 	}
 	
-	public void trackMovement(Mat thresholdImage, Mat cameraFeed) {
+	public Mat getDifference() {
+		return difference;
+	}
+	
+	public Mat getThreshold() {
+		return threshold;
+	}
+	
+	public void trackMotion(Mat frame1, Mat frame2, Mat cameraFeed) {
+		difference = new Mat();
+		threshold  = new Mat();
+		
+		Core.absdiff(frame1, frame2, difference);
+		
+		Imgproc.threshold(difference, threshold, SENSITIVITY_VALUE, 255, Imgproc.THRESH_BINARY);
+		
+		Size mySize = new Size(BLUR_SIZE, BLUR_SIZE);
+		Imgproc.blur(threshold, threshold, mySize);
+		
+		Imgproc.threshold(threshold, threshold, SENSITIVITY_VALUE, 255, Imgproc.THRESH_BINARY);
+		//redundant from above?
+		
+		trackMotion(threshold, cameraFeed);
+	}
+	
+	public void trackMotion(Mat threshold, Mat cameraFeed) {
 		boolean objectFound = false;
 		Mat temp = new Mat();
-		thresholdImage.copyTo(temp);
+		threshold.copyTo(temp);
 		Imgproc.cvtColor( temp, temp, Imgproc.COLOR_BGR2GRAY);
 		
 		resetMyROIs();
@@ -41,15 +71,14 @@ public class MotionTracker {
 		else objectFound = false;
 		
 		if (objectFound) {
-			
+			System.out.println("object(s) found");
 			double largestArea = 0;
 			double smallestArea = 1000000000;
 			
 			
 			for (MatOfPoint mop : contours) {
 				Rect nextRect = Imgproc.boundingRect(mop);
-				if (nextRect.area() > MIN_OBJECT_AREA && nextRect.area() < MAX_OBJECT_AREA
-					&& numObjects < MAX_NUM_OBJECTS) {
+				if (nextRect.area() > MIN_OBJECT_AREA && nextRect.area() < MAX_OBJECT_AREA) {
 					if (nextRect.area() > largestArea) largestArea = nextRect.area();
 					if (nextRect.area() < smallestArea) smallestArea = nextRect.area();
 					myROIs.add(nextRect);
@@ -75,6 +104,6 @@ public class MotionTracker {
 			
 			System.out.println("tracking " + myROIs.size() + " object(s)\n");
 		}//end if Object found
-	}//end trackMovement
+	}//end trackMotion
 
 }

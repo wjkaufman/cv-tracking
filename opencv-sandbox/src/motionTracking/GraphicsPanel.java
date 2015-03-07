@@ -52,10 +52,10 @@ class GraphicsPanel extends JPanel{
           super.paintComponent(g);
           if (this.image==null) return;
         
-          g.drawImage(this.image, 0, 0, MotionTrackerRunner.WIDTH, MotionTrackerRunner.HEIGHT, null);
+          g.drawImage(this.image, 0, 0, MotionTrackerWebcam.WIDTH, MotionTrackerWebcam.HEIGHT, null);
           g.setColor(Color.WHITE);
           g.setFont(new Font("", 0, 20));
-          g.drawString("Frame: " + MotionTrackerRunner.FRAME, 50, 50);
+          g.drawString("Frame: " + MotionTrackerWebcam.FRAME, 50, 50);
      }
       
 }  

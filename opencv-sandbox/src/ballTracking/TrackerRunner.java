@@ -27,9 +27,11 @@ public class TrackerRunner implements ActionListener{
 	HSVFrame hsv_min;
 	HSVFrame hsv_max;
 	
-	ColorTracker tracker;
+	ColorTracker colorTracker;
+	MotionTracker motionTracker;
 	
-	Mat videoFrame;
+	Mat videoFrame1;
+	Mat videoFrame2;
 	Mat hsvFrame;
 	Mat threshFrame;
 	
@@ -47,9 +49,11 @@ public class TrackerRunner implements ActionListener{
 		hsv_min.addActionListener(this);
 		hsv_max.addActionListener(this);
 		
-		tracker = new ColorTracker();
+		colorTracker = new ColorTracker();
+		motionTracker = new MotionTracker();
 		
-		videoFrame = new Mat();
+		videoFrame1 = new Mat();
+		videoFrame2 = new Mat();
 		hsvFrame = new Mat();
 		threshFrame = new Mat();
 		
@@ -71,28 +75,39 @@ public class TrackerRunner implements ActionListener{
 			}
 			
 			while (true) {
-				capture.read(videoFrame);
+				capture.read(videoFrame1);
+				
 				//converts videoFrame to hsv colorspace
-				Imgproc.cvtColor(videoFrame, hsvFrame, Imgproc.COLOR_BGR2HSV);
+				Imgproc.cvtColor(videoFrame1, hsvFrame, Imgproc.COLOR_BGR2HSV);
+				
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				capture.read(videoFrame2);
 				
 				//what does this do?
-				Core.inRange(hsvFrame, tracker.getMinHSV(), tracker.getMaxHSV(), threshFrame);
+				Core.inRange(hsvFrame, colorTracker.getMinHSV(), colorTracker.getMaxHSV(), threshFrame);
 				
-				if (tracker.useMorphOps()) {
-					tracker.morphOps(threshFrame);
+				if (colorTracker.useMorphOps()) {
+					colorTracker.morphOps(threshFrame);
 				}
 				
 				if (true) { //change to "if tracking is on"
-					tracker.trackColor(threshFrame, videoFrame);
+					//colorTracker.trackColor(threshFrame, videoFrame1);
+					motionTracker.trackMotion(videoFrame1, videoFrame2, videoFrame1);
 				}
 				
-				window1.updateImage(videoFrame);
-				window2.updateImage(threshFrame);
+				window1.updateImage(videoFrame1);
+				window2.updateImage(motionTracker.getThreshold());
 				
 				GraphicsFrame.FRAME++;
 				
-			}
-		}
+			}//end infinite while loop
+		}//end if capture is opened
 		
 		else {
 			System.out.println("Problem initializing videocapture");
@@ -103,16 +118,16 @@ public class TrackerRunner implements ActionListener{
 		
 		TrackerRunner runner = new TrackerRunner();
 		
-	} //end of main
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof HSVFrame) {
 			if (e.getSource() == hsv_min) {
-				tracker.setMinHSV(hsv_min.getH(), hsv_min.getS(), hsv_min.getV());
+				colorTracker.setMinHSV(hsv_min.getH(), hsv_min.getS(), hsv_min.getV());
 			}
 			else if (e.getSource() == hsv_max) {
-				tracker.setMaxHSV(hsv_max.getH(), hsv_max.getS(), hsv_max.getV());
+				colorTracker.setMaxHSV(hsv_max.getH(), hsv_max.getS(), hsv_max.getV());
 			}
 		}
 	}

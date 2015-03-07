@@ -38,14 +38,14 @@ public class MotionTrackerWebcam {
 		Mat frame1, frame2;
 		Mat grayImage1, grayImage2;
 		Mat differenceImage;
-		Mat thresholdImage;
+		Mat threshold;
 		
 		frame1 = new Mat();
 		frame2 = new Mat();
 		grayImage1 = new Mat();
 		grayImage2 = new Mat();
 		differenceImage = new Mat();
-		thresholdImage = new Mat();
+		threshold = new Mat();
 		
 		VideoCapture capture = new VideoCapture(0);
 		
@@ -59,7 +59,6 @@ public class MotionTrackerWebcam {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-			
 			while (true) {
 				
 				
@@ -76,7 +75,7 @@ public class MotionTrackerWebcam {
 				Imgproc.cvtColor(frame2, grayImage2, Imgproc.COLOR_BGR2GRAY);
 				
 				Core.absdiff(frame1, frame2, differenceImage);
-				Imgproc.threshold(differenceImage, thresholdImage, MotionTracker.SENSITIVITY_VALUE,
+				Imgproc.threshold(differenceImage, threshold, MotionTracker.SENSITIVITY_VALUE,
 							      255, Imgproc.THRESH_BINARY);
 				
 				if (debugMode) {
@@ -87,8 +86,8 @@ public class MotionTrackerWebcam {
 				}
 				
 				Size mySize = new Size(MotionTracker.BLUR_SIZE, MotionTracker.BLUR_SIZE);
-				Imgproc.blur(thresholdImage, thresholdImage, mySize);
-				Imgproc.threshold(thresholdImage, thresholdImage, MotionTracker.SENSITIVITY_VALUE,
+				Imgproc.blur(threshold, threshold, mySize);
+				Imgproc.threshold(threshold, threshold, MotionTracker.SENSITIVITY_VALUE,
 					      255, Imgproc.THRESH_BINARY); //is this reduntant from above?
 				
 				if (debugMode) {
@@ -99,10 +98,10 @@ public class MotionTrackerWebcam {
 				}
 				
 				if (trackingEnabled) {
-					tracker.searchForMovement(thresholdImage, frame1);
+					tracker.searchForMovement(threshold, frame1);
 				}
 				
-				panel.matToBufferedImage(frame1);
+				panel.matToBufferedImage(threshold);
 				panel.repaint();
 				
 				FRAME++;
