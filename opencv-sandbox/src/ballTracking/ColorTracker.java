@@ -17,7 +17,11 @@ public class ColorTracker {
 	private int V_MIN = 0;
 	private int V_MAX = 255;
 	
+	private Mat threshold;
+	
 	private int numObjects = 0;
+	
+	private Scalar color;
 	
 	private List<Rect> myROIs = new ArrayList<Rect>();
 	
@@ -26,6 +30,7 @@ public class ColorTracker {
 	
 	private boolean objectFound = false;
 	private boolean useMorphOps = true;
+	private boolean addGraphics = true;
 	
 	//min and max object area to be tracked
 	private final double MIN_OBJECT_AREA = 700;
@@ -34,6 +39,8 @@ public class ColorTracker {
 	public ColorTracker () {
 //		Rect initRect = new Rect(0, 0, GraphicsFrame.WIDTH, GraphicsFrame.HEIGHT);
 //		myROIs.add(initRect);
+		color = new Scalar(0,255,0);
+		threshold = new Mat();
 	}
 	
 	public Scalar getMinHSV() {
@@ -75,9 +82,34 @@ public class ColorTracker {
 		myROIs.clear();
 	}
 	
-	public void trackColor(Mat thresholdImage, Mat cameraFeed) {
+	public void setColor(int r, int g, int b) {
+		color = new Scalar(r, g, b);
+	}
+	
+	public void addGraphics(boolean b) {
+		addGraphics = b;
+	}
+	
+	public Mat getThreshold() {
+		return threshold;
+	}
+	
+	public void trackColor(Mat videoFrame, Mat graphicsFrame) {
+		Mat hsvFrame = new Mat();
+		Imgproc.cvtColor(videoFrame, hsvFrame, Imgproc.COLOR_BGR2HSV);
+		threshold = new Mat();
+		Core.inRange(hsvFrame, getMinHSV(), getMaxHSV(), threshold);
+		
+		if (useMorphOps) {
+			morphOps(threshold);
+		}
+		
+		trackColor1(threshold, graphicsFrame);
+	}
+	
+	public void trackColor1(Mat threshold, Mat graphicsFrame) {
 		Mat temp = new Mat();
-		thresholdImage.copyTo(temp);
+		threshold.copyTo(temp);
 		
 		resetMyROIs();
 		
@@ -119,19 +151,21 @@ public class ColorTracker {
 			
 			int rectCounter = 0;
 			
-			for (Rect boundingRect : myROIs) {
-				
-				double x = boundingRect.x + boundingRect.width / 2;
-				double y = boundingRect.y + boundingRect.height / 2;
-				
-				Core.putText(cameraFeed, "tracking object: " + rectCounter, new Point(x,y), 2,
-						 .67 * GraphicsFrame.CAPTURE_SCALE, new Scalar(0,255,0),
-						 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
-				
-				Core.rectangle(cameraFeed, new Point(boundingRect.x, boundingRect.y),
-						   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),
-						   	   new Scalar(0,255,0));
-				rectCounter++;
+			if (addGraphics) {
+				for (Rect boundingRect : myROIs) {
+					
+					double x = boundingRect.x + boundingRect.width / 2;
+					double y = boundingRect.y + boundingRect.height / 2;
+					
+					Core.putText(graphicsFrame, "tracking object: " + rectCounter, new Point(x,y), 2,
+							 .67 * GraphicsFrame.CAPTURE_SCALE, new Scalar(0,255,0),
+							 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
+					
+					Core.rectangle(graphicsFrame, new Point(boundingRect.x, boundingRect.y),
+							   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),
+							   	   new Scalar(0,255,0));
+					rectCounter++;
+				}
 			}
 			System.out.println("tracking " + myROIs.size() + " object(s)\n");
 		}

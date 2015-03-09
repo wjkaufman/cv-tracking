@@ -11,6 +11,8 @@ public class MotionTracker {
 	public static final int SENSITIVITY_VALUE = 20;
 	public static final int BLUR_SIZE = 30;
 	
+	private boolean changeFrame = false;
+	
 	private int numObjects = 0;
 	private int MAX_NUM_OBJECTS = 10;
 	private int MIN_OBJECT_AREA = 600;
@@ -18,9 +20,12 @@ public class MotionTracker {
 	
 	private Mat difference, threshold;
 	
+	private Scalar color;
+	
 	public MotionTracker() {
 		difference = new Mat();
 		threshold = new Mat();
+		color = new Scalar(54, 107, 255);
 	}
 	
 	private List<Rect> myROIs = new ArrayList<Rect>();
@@ -37,7 +42,15 @@ public class MotionTracker {
 		return threshold;
 	}
 	
-	public void trackMotion(Mat frame1, Mat frame2, Mat cameraFeed) {
+	public void setColor(int r, int g, int b) {
+		color = new Scalar(r, g, b);
+	}
+	
+	public void changeFrame(boolean b) {
+		changeFrame = b;
+	}
+	
+	public void trackMotion(Mat frame1, Mat frame2, Mat graphicsFrame) {
 		difference = new Mat();
 		threshold  = new Mat();
 		
@@ -51,7 +64,7 @@ public class MotionTracker {
 		Imgproc.threshold(threshold, threshold, SENSITIVITY_VALUE, 255, Imgproc.THRESH_BINARY);
 		//redundant from above?
 		
-		trackMotion(threshold, cameraFeed);
+		trackMotion(threshold, graphicsFrame);
 	}
 	
 	public void trackMotion(Mat threshold, Mat cameraFeed) {
@@ -87,21 +100,21 @@ public class MotionTracker {
 			}
 			
 			int rectCounter = 0;
-			
-			for (Rect boundingRect : myROIs) {
-				double x = boundingRect.x + boundingRect.width / 2;
-				double y = boundingRect.y + boundingRect.height / 2;
-				
-				Core.putText(cameraFeed, "tracking object: " + rectCounter, new Point(x,y), 2,
-						 .67 * GraphicsFrame.CAPTURE_SCALE, new Scalar(0,255,0),
-						 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
-				
-				Core.rectangle(cameraFeed, new Point(boundingRect.x, boundingRect.y),
-						   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),
-						   	   new Scalar(0,255,0));
-				rectCounter++;
+			if (changeFrame) {
+				for (Rect boundingRect : myROIs) {
+					double x = boundingRect.x + boundingRect.width / 2;
+					double y = boundingRect.y + boundingRect.height / 2;
+					
+					Core.putText(cameraFeed, "tracking object: " + rectCounter, new Point(x,y), 2,
+							 .67 * GraphicsFrame.CAPTURE_SCALE, new Scalar(0,255,0),
+							 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
+					
+					Core.rectangle(cameraFeed, new Point(boundingRect.x, boundingRect.y),
+							   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),
+							   	   new Scalar(0,255,0));
+					rectCounter++;
+				}
 			}
-			
 			System.out.println("tracking " + myROIs.size() + " object(s)\n");
 		}//end if Object found
 	}//end trackMotion

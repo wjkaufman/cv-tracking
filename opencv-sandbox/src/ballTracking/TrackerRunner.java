@@ -77,9 +77,6 @@ public class TrackerRunner implements ActionListener{
 			while (true) {
 				capture.read(videoFrame1);
 				
-				//converts videoFrame to hsv colorspace
-				Imgproc.cvtColor(videoFrame1, hsvFrame, Imgproc.COLOR_BGR2HSV);
-				
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {
@@ -89,20 +86,13 @@ public class TrackerRunner implements ActionListener{
 				
 				capture.read(videoFrame2);
 				
-				//what does this do?
-				Core.inRange(hsvFrame, colorTracker.getMinHSV(), colorTracker.getMaxHSV(), threshFrame);
-				
-				if (colorTracker.useMorphOps()) {
-					colorTracker.morphOps(threshFrame);
-				}
-				
 				if (true) { //change to "if tracking is on"
-					//colorTracker.trackColor(threshFrame, videoFrame1);
-					motionTracker.trackMotion(videoFrame1, videoFrame2, videoFrame1);
+					colorTracker.trackColor(videoFrame1, videoFrame1);
+					//motionTracker.trackMotion(videoFrame1, videoFrame2, videoFrame1);
 				}
 				
 				window1.updateImage(videoFrame1);
-				window2.updateImage(motionTracker.getThreshold());
+				window2.updateImage(colorTracker.getThreshold());
 				
 				GraphicsFrame.FRAME++;
 				
