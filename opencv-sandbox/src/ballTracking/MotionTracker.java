@@ -11,7 +11,9 @@ public class MotionTracker {
 	public static final int SENSITIVITY_VALUE = 20;
 	public static final int BLUR_SIZE = 30;
 	
-	private boolean changeFrame = false;
+	private boolean changeFrame = true;
+	private boolean debug = false;
+	
 	
 	private int numObjects = 0;
 	private int MAX_NUM_OBJECTS = 10;
@@ -25,7 +27,7 @@ public class MotionTracker {
 	public MotionTracker() {
 		difference = new Mat();
 		threshold = new Mat();
-		color = new Scalar(54, 107, 255);
+		color = new Scalar(0, 0, 255);
 	}
 	
 	private List<Rect> myROIs = new ArrayList<Rect>();
@@ -84,7 +86,9 @@ public class MotionTracker {
 		else objectFound = false;
 		
 		if (objectFound) {
-			System.out.println("object(s) found");
+			if (debug) {
+				System.out.println("object(s) found");
+			}
 			double largestArea = 0;
 			double smallestArea = 1000000000;
 			
@@ -106,16 +110,18 @@ public class MotionTracker {
 					double y = boundingRect.y + boundingRect.height / 2;
 					
 					Core.putText(cameraFeed, "tracking object: " + rectCounter, new Point(x,y), 2,
-							 .67 * GraphicsFrame.CAPTURE_SCALE, new Scalar(0,255,0),
+							 .67 * GraphicsFrame.CAPTURE_SCALE, color,
 							 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
 					
 					Core.rectangle(cameraFeed, new Point(boundingRect.x, boundingRect.y),
 							   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),
-							   	   new Scalar(0,255,0));
+							   	   color);
 					rectCounter++;
 				}
 			}
-			System.out.println("tracking " + myROIs.size() + " object(s)\n");
+			if (debug) {
+				System.out.println("tracking " + myROIs.size() + " object(s)\n");
+			}
 		}//end if Object found
 	}//end trackMotion
 

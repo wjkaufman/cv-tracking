@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -36,6 +37,11 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	private JSlider s_slider;
 	private JSlider v_slider;
 	
+	private JTextField h_field;
+	private JTextField s_field;
+	private JTextField v_field;
+	
+	
 	public HSVFrame() {
 		this("HSVFrame");
 	}
@@ -55,18 +61,30 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 		s_slider = new JSlider(SwingConstants.VERTICAL, 0, 255, s);
 		v_slider = new JSlider(SwingConstants.VERTICAL, 0, 255, v);
 		
+		h_field = new JTextField("" + h, 2);
+		s_field = new JTextField("" + s, 2);
+		v_field = new JTextField("" + v, 2);
+		
 		h_slider.addChangeListener(this);
 		s_slider.addChangeListener(this);
 		v_slider.addChangeListener(this);
 		
+		h_field.addActionListener(this);
+		s_field.addActionListener(this);
+		v_field.addActionListener(this);
 		
-		this.setSize(100,250);
+		this.setSize(130,250);
 		
 		mainPanel.setLayout(new FlowLayout());
 		
 		mainPanel.add(h_slider);
 		mainPanel.add(s_slider);
 		mainPanel.add(v_slider);
+		
+		mainPanel.add(h_field);
+		mainPanel.add(s_field);
+		mainPanel.add(v_field);
+		
 		
 		this.add(mainPanel);
 		
@@ -100,16 +118,34 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	}
 	
 	public void stateChanged(ChangeEvent e) {
-		//System.out.println("state changed");
+		System.out.println("state changed");
 		h = h_slider.getValue();
 		s = s_slider.getValue();
 		v = v_slider.getValue();
+		
+		h_field.setText("" + h);
+		s_field.setText("" + s);
+		v_field.setText("" + v);
+		
 		fireActionPerformed();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("action performed");
+		
+		try {
+			h = Integer.parseInt(h_field.getText());
+			s = Integer.parseInt(s_field.getText());
+			v = Integer.parseInt(v_field.getText());
+		}
+		catch (NumberFormatException ex) {
+			ex.printStackTrace();
+		}
+		
+		h_slider.setValue(h);
+		s_slider.setValue(s);
+		v_slider.setValue(v);
 		
 	}
 	

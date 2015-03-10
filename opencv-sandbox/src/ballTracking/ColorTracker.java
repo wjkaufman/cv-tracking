@@ -31,6 +31,8 @@ public class ColorTracker {
 	private boolean objectFound = false;
 	private boolean useMorphOps = true;
 	private boolean addGraphics = true;
+	private boolean debug = false;
+	
 	
 	//min and max object area to be tracked
 	private final double MIN_OBJECT_AREA = 700;
@@ -143,9 +145,10 @@ public class ColorTracker {
 					numObjects++;
 				}
 			}
-			
-			System.out.println("===large-area: " + largestArea);
-			System.out.println("===small-area: " + smallestArea);
+			if (debug) {
+				System.out.println("===large-area: " + largestArea);
+				System.out.println("===small-area: " + smallestArea);
+			}
 			
 			//draws text and bounding rectangle to image
 			
@@ -167,7 +170,9 @@ public class ColorTracker {
 					rectCounter++;
 				}
 			}
-			System.out.println("tracking " + myROIs.size() + " object(s)\n");
+			if (debug) {
+				System.out.println("tracking " + myROIs.size() + " object(s)\n");
+			}
 		}
 	}
 }
