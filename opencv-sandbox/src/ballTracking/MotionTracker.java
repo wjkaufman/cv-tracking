@@ -9,7 +9,7 @@ import org.opencv.core.*;
 
 public class MotionTracker {
 	public static final int SENSITIVITY_VALUE = 20;
-	public static final int BLUR_SIZE = 30;
+	public static final int BLUR_SIZE = 20;
 	
 	private boolean changeFrame = true;
 	private boolean debug = false;
@@ -56,7 +56,14 @@ public class MotionTracker {
 		difference = new Mat();
 		threshold  = new Mat();
 		
-		Core.absdiff(frame1, frame2, difference);
+		Mat frame1gray = new Mat();
+		Mat frame2gray = new Mat();
+		
+		
+		Imgproc.cvtColor(frame1, frame1gray, Imgproc.COLOR_BGR2GRAY);
+		Imgproc.cvtColor(frame2, frame2gray, Imgproc.COLOR_BGR2GRAY);
+		
+		Core.absdiff(frame1gray, frame2gray, difference);
 		
 		Imgproc.threshold(difference, threshold, SENSITIVITY_VALUE, 255, Imgproc.THRESH_BINARY);
 		
@@ -73,7 +80,7 @@ public class MotionTracker {
 		boolean objectFound = false;
 		Mat temp = new Mat();
 		threshold.copyTo(temp);
-		Imgproc.cvtColor( temp, temp, Imgproc.COLOR_BGR2GRAY);
+		//Imgproc.cvtColor( temp, temp, Imgproc.COLOR_BGR2GRAY);
 		
 		resetMyROIs();
 		

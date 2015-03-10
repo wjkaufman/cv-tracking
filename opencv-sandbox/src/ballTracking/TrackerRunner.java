@@ -86,12 +86,12 @@ public class TrackerRunner implements ActionListener{
 				capture.read(videoFrame2);
 				
 				if (true) { //change to "if tracking is on"
-					colorTracker.trackColor(videoFrame1, videoFrame1);
-					//motionTracker.trackMotion(videoFrame1, videoFrame2, videoFrame1);
+					//colorTracker.trackColor(videoFrame1, videoFrame1);
+					motionTracker.trackMotion(videoFrame1, videoFrame2, videoFrame1);
 				}
 				
 				window1.updateImage(videoFrame1);
-				window2.updateImage(colorTracker.getThreshold());
+				window2.updateImage(motionTracker.getThreshold());
 				
 				GraphicsFrame.FRAME++;
 				

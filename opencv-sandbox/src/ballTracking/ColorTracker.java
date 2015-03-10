@@ -69,9 +69,13 @@ public class ColorTracker {
 		return useMorphOps;
 	}
 	
+	public void useMorphOps(boolean b) {
+		useMorphOps = b;
+	}
+	
 	public void morphOps(Mat thresh) {
 		Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3,3));
-		Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(8,8));
+		Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3,3));
 		
 		Imgproc.erode(thresh, thresh, erodeElement);
 		Imgproc.erode(thresh, thresh, erodeElement);
