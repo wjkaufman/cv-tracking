@@ -49,8 +49,13 @@ public class TrackerRunner implements ActionListener{
 		hsv_min.addActionListener(this);
 		hsv_max.addActionListener(this);
 		
+		window1.addActionListener(this);
+		window2.addActionListener(this);
+		
 		colorTracker = new ColorTracker();
 		motionTracker = new MotionTracker();
+		
+		colorTracker.changeFrame(false);
 		
 		videoFrame1 = new Mat();
 		videoFrame2 = new Mat();
@@ -86,12 +91,12 @@ public class TrackerRunner implements ActionListener{
 				capture.read(videoFrame2);
 				
 				if (true) { //change to "if tracking is on"
-					//colorTracker.trackColor(videoFrame1, videoFrame1);
-					motionTracker.trackMotion(videoFrame1, videoFrame2, videoFrame1);
+					colorTracker.trackColor(videoFrame1, videoFrame1);
+					//motionTracker.trackMotion(videoFrame1, videoFrame2, videoFrame1);
 				}
 				
 				window1.updateImage(videoFrame1);
-				window2.updateImage(motionTracker.getThreshold());
+				window2.updateImage(colorTracker.getThreshold());
 				
 				GraphicsFrame.FRAME++;
 				
@@ -110,14 +115,26 @@ public class TrackerRunner implements ActionListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() instanceof HSVFrame) {
-			if (e.getSource() == hsv_min) {
+	public void actionPerformed(ActionEvent event) {
+		if (event.getSource() instanceof HSVFrame) {
+			System.out.println("inside actionPerformed, TrackerRunner, performed by HSVFrame");
+			if (event.getSource() == hsv_min) {
 				colorTracker.setMinHSV(hsv_min.getH(), hsv_min.getS(), hsv_min.getV());
 			}
-			else if (e.getSource() == hsv_max) {
+			else if (event.getSource() == hsv_max) {
 				colorTracker.setMaxHSV(hsv_max.getH(), hsv_max.getS(), hsv_max.getV());
 			}
+		}
+		else if (event.getSource() instanceof GraphicsPanel) {
+			System.out.println("Did stuff");
+			try {
+				hsv_min.setHSV(((GraphicsPanel) event.getSource()).getMinHSV());
+				hsv_max.setHSV(((GraphicsPanel)event.getSource()).getMaxHSV());
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			
 		}
 	}
 	

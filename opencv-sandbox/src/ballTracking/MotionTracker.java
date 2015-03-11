@@ -17,7 +17,7 @@ public class MotionTracker {
 	
 	private int numObjects = 0;
 	private int MAX_NUM_OBJECTS = 10;
-	private int MIN_OBJECT_AREA = 600;
+	private int MIN_OBJECT_AREA = 500;
 	private int MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT / 2;
 	
 	private Mat difference, threshold;
@@ -27,7 +27,7 @@ public class MotionTracker {
 	public MotionTracker() {
 		difference = new Mat();
 		threshold = new Mat();
-		color = new Scalar(0, 0, 255);
+		color = new Scalar(255, 0, 0);
 	}
 	
 	private List<Rect> myROIs = new ArrayList<Rect>();

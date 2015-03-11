@@ -5,15 +5,20 @@ import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
 import org.opencv.core.Mat;
 
-public class GraphicsFrame extends JFrame{
+public class GraphicsFrame extends JFrame implements ActionListener{
 	public static final int WIDTH = 600, HEIGHT = 400;
 	public static final double CAPTURE_SCALE = 1;
 	public static int FRAME = 0;
+	
+	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 	
 	private GraphicsPanel panel;
 
@@ -42,6 +47,8 @@ public class GraphicsFrame extends JFrame{
 		this.setSize(WIDTH, HEIGHT);
 		
 		panel = new GraphicsPanel();
+		panel.addActionListener(this);
+		
 		this.add(panel);
 		
 		this.setVisible(true);
@@ -51,4 +58,27 @@ public class GraphicsFrame extends JFrame{
 		return panel.updateImage(image);
 	}
 	
+	public void addActionListener(ActionListener al) {
+		listeners.add(al);
+	}
+	
+	public void removeActionListener(ActionListener al) {
+		listeners.remove(al);
+	}
+	
+	public void fireActionPerformed(ActionEvent ae) {
+		for(ActionListener al : listeners) {
+			al.actionPerformed(ae);
+		}
+	}
+	
+	public void fireActionPerformed() {
+		fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+							panel.getAverageHSVAsString()));
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		fireActionPerformed(e);
+	}
 }

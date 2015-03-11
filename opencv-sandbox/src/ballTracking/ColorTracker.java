@@ -10,12 +10,12 @@ import org.opencv.core.*;
 
 public class ColorTracker {
 	//hsv color values for tracking the specific object
-	private int H_MIN = 0;
-	private int H_MAX = 360;
-	private int S_MIN = 0;
-	private int S_MAX = 255;
-	private int V_MIN = 0;
-	private int V_MAX = 255;
+	private float H_MIN = 0;
+	private float H_MAX = 360;
+	private float S_MIN = 0;
+	private float S_MAX = 255;
+	private float V_MIN = 0;
+	private float V_MAX = 255;
 	
 	private Mat threshold;
 	
@@ -27,16 +27,18 @@ public class ColorTracker {
 	
 	//max number of objects to be tracked via this method
 	private final int MAX_NUM_OBJECTS = 7;
+	//min and max object area to be tracked
+	private final double MIN_OBJECT_AREA = 500;
+	private final double MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT;
+	
 	
 	private boolean objectFound = false;
 	private boolean useMorphOps = true;
-	private boolean addGraphics = true;
+	private boolean changeFrame = true;
 	private boolean debug = false;
 	
 	
-	//min and max object area to be tracked
-	private final double MIN_OBJECT_AREA = 700;
-	private final double MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT;
+	
 	
 	public ColorTracker () {
 //		Rect initRect = new Rect(0, 0, GraphicsFrame.WIDTH, GraphicsFrame.HEIGHT);
@@ -53,16 +55,16 @@ public class ColorTracker {
 		return new Scalar(H_MAX, S_MAX, V_MAX);
 	}
 	
-	public void setMinHSV(int h_val, int s_val, int v_val) {
-		H_MIN = h_val;
-		S_MIN = s_val;
-		V_MIN = v_val;
+	public void setMinHSV(float f, float g, float h) {
+		H_MIN = f;
+		S_MIN = g;
+		V_MIN = h;
 	}
 	
-	public void setMaxHSV(int h_val, int s_val, int v_val) {
-		H_MAX = h_val;
-		S_MAX = s_val;
-		V_MAX = v_val;
+	public void setMaxHSV(float f, float g, float h) {
+		H_MAX = f;
+		S_MAX = g;
+		V_MAX = h;
 	}
 	
 	public boolean useMorphOps() {
@@ -93,7 +95,7 @@ public class ColorTracker {
 	}
 	
 	public void addGraphics(boolean b) {
-		addGraphics = b;
+		changeFrame = b;
 	}
 	
 	public Mat getThreshold() {
@@ -158,7 +160,7 @@ public class ColorTracker {
 			
 			int rectCounter = 0;
 			
-			if (addGraphics) {
+			if (changeFrame) {
 				for (Rect boundingRect : myROIs) {
 					
 					double x = boundingRect.x + boundingRect.width / 2;
@@ -178,5 +180,10 @@ public class ColorTracker {
 				System.out.println("tracking " + myROIs.size() + " object(s)\n");
 			}
 		}
+	}
+
+	public void changeFrame(boolean b) {
+		changeFrame = b;
+		
 	}
 }

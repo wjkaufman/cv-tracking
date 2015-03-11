@@ -1,0 +1,5 @@
+To do:
+
+make sure all the action listeners work from GraphicsPanel up to TrackerRunner to HSVFrame
+with the end-goal of making dragging change the hsv values for color
+work on the ball class, actually tracking a ball (end end goal)

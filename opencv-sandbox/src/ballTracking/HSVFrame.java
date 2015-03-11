@@ -27,9 +27,9 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	
 	private int HSVBound;
 	
-	private int h;
-	private int s;
-	private int v;
+	private float h;
+	private float s;
+	private float v;
 	
 	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
@@ -93,9 +93,9 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 		this.setVisible(true);
 	}
 	
-	public int getH() { return h; }
-	public int getS() { return s; }
-	public int getV() { return v; }
+	public float getH() { return h; }
+	public float getS() { return s; }
+	public float getV() { return v; }
 	
 	public boolean isHSVMin() {
 		if (HSVBound == HSV_MIN) return true;
@@ -107,8 +107,8 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 		else return false;
 	}
 	
-	public int[] getHSV() {
-		int[] vals = {h, s, v};
+	public float[] getHSV() {
+		float[] vals = {h, s, v};
 		return vals;
 	}
 	
@@ -117,36 +117,49 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 		return string;
 	}
 	
+	public void setHSV(float[] hsv) {
+		h = hsv[0];
+		s = hsv[1];
+		v = hsv[2];
+		
+		updateFrame();
+	}
+	
+	public void updateFrame() {
+		h_slider.setValue((int)h);
+		s_slider.setValue((int)s);
+		v_slider.setValue((int)v);
+		
+		h_field.setText("" + (int)h);
+		s_field.setText("" + (int)s);
+		v_field.setText("" + (int)v);
+	}
+	
 	public void stateChanged(ChangeEvent e) {
-		System.out.println("state changed");
+		System.out.println("state changed in HSVFrame");
 		h = h_slider.getValue();
 		s = s_slider.getValue();
 		v = v_slider.getValue();
 		
-		h_field.setText("" + h);
-		s_field.setText("" + s);
-		v_field.setText("" + v);
+		updateFrame();
 		
 		fireActionPerformed();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("action performed");
-		
-		try {
-			h = Integer.parseInt(h_field.getText());
-			s = Integer.parseInt(s_field.getText());
-			v = Integer.parseInt(v_field.getText());
+		if (e.getSource() instanceof JTextField) {
+			try {
+				h = Integer.parseInt(h_field.getText());
+				s = Integer.parseInt(s_field.getText());
+				v = Integer.parseInt(v_field.getText());
+			}
+			catch (NumberFormatException ex) {
+				ex.printStackTrace();
+			}
+			
+			updateFrame();
 		}
-		catch (NumberFormatException ex) {
-			ex.printStackTrace();
-		}
-		
-		h_slider.setValue(h);
-		s_slider.setValue(s);
-		v_slider.setValue(v);
-		
 	}
 	
 	/**
