@@ -28,7 +28,7 @@ public class ColorTracker {
 	//max number of objects to be tracked via this method
 	private final int MAX_NUM_OBJECTS = 7;
 	//min and max object area to be tracked
-	private final double MIN_OBJECT_AREA = 500;
+	private final double MIN_OBJECT_AREA = 20;
 	private final double MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT;
 	
 	

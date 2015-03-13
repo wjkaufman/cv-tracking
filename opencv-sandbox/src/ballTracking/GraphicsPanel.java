@@ -331,18 +331,21 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		
 		System.out.println("mouse released");
 		drawRect = false;
 		endX = e.getX();
 		endY = e.getY();
 		
-		if (endX < 0) endX = 0;
-		if (endY < 0) endY = 0;
-		
-		updateRectData();
-		setMinMaxHSV(20);
-		printRectData();
-		fireActionPerformed();
+		if (startX != endX || startY != endY) {
+			if (endX < 0) endX = 0;
+			if (endY < 0) endY = 0;
+			
+			updateRectData();
+			setMinMaxHSV(20);
+			printRectData();
+			fireActionPerformed();
+		}
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {

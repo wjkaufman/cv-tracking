@@ -23,6 +23,7 @@ public class TrackerRunner implements ActionListener{
 	
 	GraphicsFrame window1;
 	GraphicsFrame window2;
+	GraphicsFrame window3;
 	
 	HSVFrame hsv_min;
 	HSVFrame hsv_max;
@@ -32,6 +33,7 @@ public class TrackerRunner implements ActionListener{
 	
 	Mat videoFrame1;
 	Mat videoFrame2;
+	Mat displayFrame;
 	Mat hsvFrame;
 	Mat threshFrame;
 	
@@ -41,8 +43,10 @@ public class TrackerRunner implements ActionListener{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
 		//make the JFrame
-		window1 = new GraphicsFrame("webcam capture - color tracking");
-		window2 = new GraphicsFrame("webcam capture - threshold");
+		window1 = new GraphicsFrame("webcam capture");
+		window2 = new GraphicsFrame("color tracking threshold");
+		window3 = new GraphicsFrame("motion tracking threshold");
+		
 		
 		hsv_min = new HSVFrame(HSVFrame.HSV_MIN, "min hsv", 0, 0, 0);
 		hsv_max = new HSVFrame(HSVFrame.HSV_MAX, "max hsv", 360, 255, 255);
@@ -51,14 +55,14 @@ public class TrackerRunner implements ActionListener{
 		
 		window1.addActionListener(this);
 		window2.addActionListener(this);
+		window3.addActionListener(this);
 		
 		colorTracker = new ColorTracker();
 		motionTracker = new MotionTracker();
 		
-		colorTracker.changeFrame(false);
-		
 		videoFrame1 = new Mat();
 		videoFrame2 = new Mat();
+		displayFrame = new Mat();
 		hsvFrame = new Mat();
 		threshFrame = new Mat();
 		
@@ -89,14 +93,16 @@ public class TrackerRunner implements ActionListener{
 				}
 				
 				capture.read(videoFrame2);
+				videoFrame1.copyTo(displayFrame);
 				
 				if (true) { //change to "if tracking is on"
-					colorTracker.trackColor(videoFrame1, videoFrame1);
-					//motionTracker.trackMotion(videoFrame1, videoFrame2, videoFrame1);
+					colorTracker.trackColor(videoFrame1, displayFrame);
+					motionTracker.trackMotion(videoFrame1, videoFrame2, displayFrame);
 				}
 				
-				window1.updateImage(videoFrame1);
+				window1.updateImage(displayFrame);
 				window2.updateImage(colorTracker.getThreshold());
+				window3.updateImage(motionTracker.getThreshold());
 				
 				GraphicsFrame.FRAME++;
 				
@@ -117,7 +123,6 @@ public class TrackerRunner implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() instanceof HSVFrame) {
-//			System.out.println("inside actionPerformed, TrackerRunner, performed by HSVFrame");
 			if (event.getSource() == hsv_min) {
 				colorTracker.setMinHSV(hsv_min.getH(), hsv_min.getS(), hsv_min.getV());
 			}
@@ -126,7 +131,6 @@ public class TrackerRunner implements ActionListener{
 			}
 		}
 		else if (event.getSource() instanceof GraphicsPanel) {
-//			System.out.println("Did stuff");
 			try {
 				hsv_min.setHSV(((GraphicsPanel) event.getSource()).getMinHSV());
 				hsv_max.setHSV(((GraphicsPanel) event.getSource()).getMaxHSV());
