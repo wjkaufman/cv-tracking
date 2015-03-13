@@ -117,7 +117,7 @@ public class TrackerRunner implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() instanceof HSVFrame) {
-			System.out.println("inside actionPerformed, TrackerRunner, performed by HSVFrame");
+//			System.out.println("inside actionPerformed, TrackerRunner, performed by HSVFrame");
 			if (event.getSource() == hsv_min) {
 				colorTracker.setMinHSV(hsv_min.getH(), hsv_min.getS(), hsv_min.getV());
 			}
@@ -126,10 +126,12 @@ public class TrackerRunner implements ActionListener{
 			}
 		}
 		else if (event.getSource() instanceof GraphicsPanel) {
-			System.out.println("Did stuff");
+//			System.out.println("Did stuff");
 			try {
 				hsv_min.setHSV(((GraphicsPanel) event.getSource()).getMinHSV());
-				hsv_max.setHSV(((GraphicsPanel)event.getSource()).getMaxHSV());
+				hsv_max.setHSV(((GraphicsPanel) event.getSource()).getMaxHSV());
+				System.out.println("\n\n");
+				((GraphicsPanel)(event.getSource())).printRectData();
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();

@@ -100,8 +100,8 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      public float[] getHSV(int x, int y) {
     	 float[] hsvVals = getRawHSV(x, y);
     	 hsvVals[0] = hsvVals[0] * 360;
-    	 hsvVals[1] = hsvVals[1] * 100;
-    	 hsvVals[2] = hsvVals[2] * 100;
+    	 hsvVals[1] = hsvVals[1] * 255;
+    	 hsvVals[2] = hsvVals[2] * 255;
     	 
     	 return hsvVals;
      }
@@ -137,12 +137,38 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
     	 return "h: " + averageHSV[0] + "; s: " + averageHSV[1] + "; v: " + averageHSV[2];
      }
      
+     public float[] getMinHSV(int x, int y, int width, int height) {
+    	 float[] hsvVals = {360, 255, 255};
+    	 
+    	 for (int row = x; row < x + width; row++) {
+    		 for (int col = y; col < y + height; col++) {
+    			 float[] nextHSV = getHSV(row, col);
+    			 if (nextHSV[0] < hsvVals[0]) hsvVals[0] = nextHSV[0];
+    			 if (nextHSV[1] < hsvVals[1]) hsvVals[1] = nextHSV[1];
+    			 if (nextHSV[2] < hsvVals[2]) hsvVals[2] = nextHSV[2];
+    		 }
+    	 }
+    	 return hsvVals;
+     }
+     
+     public float[] getMinHSV(int[] rect) {
+    	 return getMinHSV(rect[0], rect[1], rect[2], rect[3]);
+     }
+     
+     public float[] getMinHSV() {
+    	 return minHSV;
+     }
+     
+     public void updateMinHSV() {
+    	 minHSV = getMinHSV(rect);
+     }
+     
      public float[] getMaxHSV(int x, int y, int width, int height) {
     	 float[] hsvVals = {0, 0, 0};
     	 
     	 for (int row = x; row < x + width; row++) {
     		 for (int col = y; col < y + height; col++) {
-    			 float[] nextHSV = getHSV(x, y);
+    			 float[] nextHSV = getHSV(row, col);
     			 if (nextHSV[0] > hsvVals[0]) hsvVals[0] = nextHSV[0];
     			 if (nextHSV[1] > hsvVals[1]) hsvVals[1] = nextHSV[1];
     			 if (nextHSV[2] > hsvVals[2]) hsvVals[2] = nextHSV[2];
@@ -163,30 +189,14 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
     	 maxHSV = getMaxHSV(rect);
      }
      
-     public float[] getMinHSV(int x, int y, int width, int height) {
-    	 float[] hsvVals = {360, 100, 100};
+     public void setMinMaxHSV(int tolerance) {
+    	 minHSV[0] = averageHSV[0] - tolerance;
+    	 minHSV[1] = averageHSV[1] - tolerance;
+    	 minHSV[2] = averageHSV[2] - tolerance;
     	 
-    	 for (int row = x; row < x + width; row++) {
-    		 for (int col = y; col < y + height; col++) {
-    			 float[] nextHSV = getHSV(x, y);
-    			 if (nextHSV[0] < hsvVals[0]) hsvVals[0] = nextHSV[0];
-    			 if (nextHSV[1] < hsvVals[1]) hsvVals[1] = nextHSV[1];
-    			 if (nextHSV[2] < hsvVals[2]) hsvVals[2] = nextHSV[2];
-    		 }
-    	 }
-    	 return hsvVals;
-     }
-     
-     public float[] getMinHSV(int[] rect) {
-    	 return getMinHSV(rect[0], rect[1], rect[2], rect[3]);
-     }
-     
-     public float[] getMinHSV() {
-    	 return minHSV;
-     }
-     
-     public void updateMinHSV() {
-    	 minHSV = getMinHSV(rect);
+    	 maxHSV[0] = averageHSV[0] + tolerance;
+    	 maxHSV[1] = averageHSV[1] + tolerance;
+    	 maxHSV[2] = averageHSV[2] + tolerance;
      }
      
      public int[] getRect(int x0, int y0, int x1, int y1) {
@@ -226,9 +236,11 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      public void updateRectData() {
     	 System.out.println("update rect data");
     	 updateRect();
-    	 updateAverageHSV();
+    	 
     	 updateMinHSV();
     	 updateMaxHSV();
+    	 
+    	 updateAverageHSV();
      }
      
      public String getRectDataAsString() {
@@ -292,8 +304,7 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
+		
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
@@ -329,9 +340,8 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
 		if (endY < 0) endY = 0;
 		
 		updateRectData();
-		
+		setMinMaxHSV(20);
 		printRectData();
-		
 		fireActionPerformed();
 	}
 	@Override

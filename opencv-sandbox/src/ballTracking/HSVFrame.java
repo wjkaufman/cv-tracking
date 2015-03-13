@@ -9,6 +9,7 @@ import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -26,6 +27,8 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	public static final int HSV_MAX = 1;
 	
 	private int HSVBound;
+	
+	private boolean reactStateChanged = true;
 	
 	private float h;
 	private float s;
@@ -118,6 +121,7 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	}
 	
 	public void setHSV(float[] hsv) {
+		System.out.println("\n\nsetHSV array: " + Arrays.toString(hsv));
 		h = hsv[0];
 		s = hsv[1];
 		v = hsv[2];
@@ -126,6 +130,8 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	}
 	
 	public void updateFrame() {
+		System.out.println("\n" + h + " " + s + " " + v);
+		reactStateChanged = false;
 		h_slider.setValue((int)h);
 		s_slider.setValue((int)s);
 		v_slider.setValue((int)v);
@@ -133,17 +139,23 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 		h_field.setText("" + (int)h);
 		s_field.setText("" + (int)s);
 		v_field.setText("" + (int)v);
+		
+		reactStateChanged = true;
+		
+		fireActionPerformed();
 	}
 	
 	public void stateChanged(ChangeEvent e) {
-		System.out.println("state changed in HSVFrame");
-		h = h_slider.getValue();
-		s = s_slider.getValue();
-		v = v_slider.getValue();
+//		System.out.println("state changed in HSVFrame");
+		//the problem is here!!!
+		if (reactStateChanged) {
+			h = h_slider.getValue();
+			s = s_slider.getValue();
+			v = v_slider.getValue();
+			
+			updateFrame();
+		}
 		
-		updateFrame();
-		
-		fireActionPerformed();
 	}
 
 	@Override
