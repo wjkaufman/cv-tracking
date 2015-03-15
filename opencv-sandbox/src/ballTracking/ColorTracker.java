@@ -24,6 +24,7 @@ public class ColorTracker {
 	private Scalar color;
 	
 	private List<Rect> myROIs = new ArrayList<Rect>();
+	private List<Obj> objects = new ArrayList<Obj>();
 	
 	//max number of objects to be tracked via this method
 	private final int MAX_NUM_OBJECTS = 7;
@@ -34,15 +35,13 @@ public class ColorTracker {
 	
 	private boolean objectFound = false;
 	private boolean useMorphOps = true;
-	private boolean changeFrame = true;
+	private boolean addGraphics = true;
 	private boolean debug = false;
 	
 	
 	
 	
 	public ColorTracker () {
-//		Rect initRect = new Rect(0, 0, GraphicsFrame.WIDTH, GraphicsFrame.HEIGHT);
-//		myROIs.add(initRect);
 		color = new Scalar(0,255,0);
 		threshold = new Mat();
 	}
@@ -95,7 +94,7 @@ public class ColorTracker {
 	}
 	
 	public void addGraphics(boolean b) {
-		changeFrame = b;
+		addGraphics = b;
 	}
 	
 	public Mat getThreshold() {
@@ -121,7 +120,6 @@ public class ColorTracker {
 		
 		resetMyROIs();
 		
-		//System.out.println("printing myROI 0: " + myROIs.get(0));
 		
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		Mat hierarchy = new Mat();
@@ -160,7 +158,7 @@ public class ColorTracker {
 			
 			int rectCounter = 0;
 			
-			if (changeFrame) {
+			if (addGraphics) {
 				for (Rect boundingRect : myROIs) {
 					
 					double x = boundingRect.x + boundingRect.width / 2;
@@ -183,7 +181,7 @@ public class ColorTracker {
 	}
 
 	public void changeFrame(boolean b) {
-		changeFrame = b;
+		addGraphics = b;
 		
 	}
 }

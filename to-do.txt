@@ -3,3 +3,8 @@ To do:
 make sure all the action listeners work from GraphicsPanel up to TrackerRunner to HSVFrame
 with the end-goal of making dragging change the hsv values for color
 work on the ball class, actually tracking a ball (end end goal)
+add Obj lists to color and motion trackers
+
+Bigger to do:
+
+add superclass for trackers (including thresholds, contours, objs, etc.)
