@@ -11,18 +11,17 @@ public class MotionTracker {
 	public static final int SENSITIVITY_VALUE = 20;
 	public static final int BLUR_SIZE = 20;
 	
-	private boolean changeFrame = true;
+	private boolean addGraphics = false;
 	private boolean debug = false;
 	
-	
-	private int numObjects = 0;
-	private int MAX_NUM_OBJECTS = 10;
 	private int MIN_OBJECT_AREA = 500;
 	private int MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT / 2;
 	
 	private Mat difference, threshold;
 	
 	private Scalar color;
+
+	private List<Rect> myROIs = new ArrayList<Rect>();
 	
 	public MotionTracker() {
 		difference = new Mat();
@@ -30,7 +29,6 @@ public class MotionTracker {
 		color = new Scalar(255, 0, 0);
 	}
 	
-	private List<Rect> myROIs = new ArrayList<Rect>();
 	
 	public void resetMyROIs() {
 		myROIs.clear();
@@ -48,11 +46,11 @@ public class MotionTracker {
 		color = new Scalar(r, g, b);
 	}
 	
-	public void changeFrame(boolean b) {
-		changeFrame = b;
+	public void addGraphics(boolean b) {
+		addGraphics = b;
 	}
 	
-	public void trackMotion(Mat frame1, Mat frame2, Mat graphicsFrame) {
+	public void trackMotion(Mat frame1, Mat frame2, Mat graphicsFrame, List<Obj> objects) {
 		difference = new Mat();
 		threshold  = new Mat();
 		
@@ -73,10 +71,10 @@ public class MotionTracker {
 		Imgproc.threshold(threshold, threshold, SENSITIVITY_VALUE, 255, Imgproc.THRESH_BINARY);
 		//redundant from above?
 		
-		trackMotion(threshold, graphicsFrame);
+		trackMotion(threshold, graphicsFrame, objects);
 	}
 	
-	public void trackMotion(Mat threshold, Mat cameraFeed) {
+	public void trackMotion(Mat threshold, Mat cameraFeed, List<Obj> objects) {
 		boolean objectFound = false;
 		Mat temp = new Mat();
 		threshold.copyTo(temp);
@@ -106,12 +104,13 @@ public class MotionTracker {
 					if (nextRect.area() > largestArea) largestArea = nextRect.area();
 					if (nextRect.area() < smallestArea) smallestArea = nextRect.area();
 					myROIs.add(nextRect);
-					numObjects++;
+					Obj nextObj = new Obj(nextRect);
+					objects.add(nextObj);
 				}
 			}
 			
 			int rectCounter = 0;
-			if (changeFrame) {
+			if (addGraphics) {
 				for (Rect boundingRect : myROIs) {
 					double x = boundingRect.x + boundingRect.width / 2;
 					double y = boundingRect.y + boundingRect.height / 2;

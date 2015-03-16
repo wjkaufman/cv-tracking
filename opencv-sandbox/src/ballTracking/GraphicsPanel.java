@@ -1,10 +1,8 @@
 package ballTracking;
-/*  
- * Captures the camera stream with OpenCV
- * Search for the faces
- * Display a circle around the faces using Java
- */
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -13,28 +11,22 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
-import org.opencv.highgui.VideoCapture;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
 
 class GraphicsPanel extends JPanel implements ActionListener, MouseListener, MouseMotionListener{
      private static final long serialVersionUID = 1L;
      private BufferedImage image;
+     
+     List<Obj> objects;
      
      private int startX;
      private int endX;
@@ -53,9 +45,13 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      // Create a constructor method
      public GraphicsPanel(){
           super();
+          
+          objects = new ArrayList<Obj>();
+          
           this.addMouseListener(this);
           this.addMouseMotionListener(this);
      }
+     
      /*
       * Converts/writes a Mat into a BufferedImage.
       * 
@@ -72,6 +68,23 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
                return false; // Error
           }
        return true; // Successful
+     }
+     
+     public void addObject(Obj object) {
+    	 objects.add(object);
+     }
+     
+     public void addObjects(List<Obj> newObjects) {
+    	 objects.addAll(newObjects);
+     }
+     
+     public void clearObjects() {
+    	 objects.clear();
+     }
+     
+     public void setObjects(List<Obj> newObjects) {
+    	 clearObjects();
+    	 addObjects(newObjects);
      }
      
      public int getRGB(int x, int y) {
@@ -190,9 +203,9 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      }
      
      public void setMinMaxHSV(int tolerance) {
-    	 minHSV[0] = averageHSV[0] - tolerance;
-    	 minHSV[1] = averageHSV[1] - tolerance;
-    	 minHSV[2] = averageHSV[2] - tolerance;
+    	 minHSV[0] = Math.abs(averageHSV[0] - tolerance);
+    	 minHSV[1] = Math.abs(averageHSV[1] - tolerance);
+    	 minHSV[2] = Math.abs(averageHSV[2] - tolerance);
     	 
     	 maxHSV[0] = averageHSV[0] + tolerance;
     	 maxHSV[1] = averageHSV[1] + tolerance;
@@ -274,10 +287,17 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
           g.setFont(new Font("", 0, 20));
           g.drawString("Frame: " + GraphicsFrame.FRAME, 50, 50);
           
+          if (objects.size() > 0) {
+	          for (Obj object : objects) {
+	        	  object.draw(g);
+	          }
+          }
+          
           if (drawRect) {
         	  g.setColor(rectColor);
         	  g.fillRect(rect[0], rect[1], rect[2], rect[3]);
           }
+          
      }
      
      
@@ -342,7 +362,7 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
 			if (endY < 0) endY = 0;
 			
 			updateRectData();
-			setMinMaxHSV(20);
+			setMinMaxHSV(40);
 			printRectData();
 			fireActionPerformed();
 		}

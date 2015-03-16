@@ -1,23 +1,14 @@
 package ballTracking;
 
-
-import java.awt.BorderLayout;
+import java.util.List;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JFrame;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
+import java.util.ArrayList;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
-import org.opencv.imgproc.Imgproc;
 
 public class TrackerRunner implements ActionListener{
 	
@@ -30,6 +21,11 @@ public class TrackerRunner implements ActionListener{
 	
 	ColorTracker colorTracker;
 	MotionTracker motionTracker;
+	
+	List<Obj> colorBalls = new ArrayList<Obj>();
+	List<Obj> motionBalls = new ArrayList<Obj>();
+	
+	Obj colorBall, motionBall;
 	
 	Mat videoFrame1;
 	Mat videoFrame2;
@@ -59,6 +55,15 @@ public class TrackerRunner implements ActionListener{
 		
 		colorTracker = new ColorTracker();
 		motionTracker = new MotionTracker();
+		colorTracker.addGraphics(false);
+		motionTracker.addGraphics(false);
+		
+		colorBall = new Obj();
+		motionBall = new Obj();
+		motionBall.drawObj(false);
+		
+		colorBall.setColor(new Color(0,255,0));
+		motionBall.setColor(new Color(255,0,0));
 		
 		videoFrame1 = new Mat();
 		videoFrame2 = new Mat();
@@ -70,8 +75,6 @@ public class TrackerRunner implements ActionListener{
 		
 		capture.set(3, GraphicsFrame.WIDTH * GraphicsFrame.CAPTURE_SCALE);
 		capture.set(4, GraphicsFrame.HEIGHT * GraphicsFrame.CAPTURE_SCALE);
-		
-		this.start();
 	}
 	
 	public void start() {
@@ -84,6 +87,9 @@ public class TrackerRunner implements ActionListener{
 			}
 			
 			while (true) {
+				colorBalls.clear();
+				motionBalls.clear();
+				
 				capture.read(videoFrame1);
 				
 				try {
@@ -96,13 +102,23 @@ public class TrackerRunner implements ActionListener{
 				videoFrame1.copyTo(displayFrame);
 				
 				if (true) { //change to "if tracking is on"
-					colorTracker.trackColor(videoFrame1, displayFrame);
-					motionTracker.trackMotion(videoFrame1, videoFrame2, displayFrame);
+					colorTracker.trackColor(videoFrame1, displayFrame, colorBalls);
+					motionTracker.trackMotion(videoFrame1, videoFrame2, displayFrame, motionBalls);
 				}
+				
+				colorBall.addPosition(colorBall.getClosestObj(colorBalls));
+				motionBall.addPosition(motionBall.getClosestObj(motionBalls));
+				
+				window1.addObject(colorBall);
+				window1.addObject(motionBall);
 				
 				window1.updateImage(displayFrame);
 				window2.updateImage(colorTracker.getThreshold());
 				window3.updateImage(motionTracker.getThreshold());
+				
+				window1.getPanel().clearObjects();
+				
+				colorBall.printData();
 				
 				GraphicsFrame.FRAME++;
 				
@@ -117,6 +133,7 @@ public class TrackerRunner implements ActionListener{
 	public static void main(String arg[]) {
 		
 		TrackerRunner runner = new TrackerRunner();
+		runner.start();
 		
 	}
 

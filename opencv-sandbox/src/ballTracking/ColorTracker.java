@@ -1,11 +1,9 @@
 package ballTracking;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.ArrayList;
 
 import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Moments;
 import org.opencv.core.*;
 
 public class ColorTracker {
@@ -24,7 +22,6 @@ public class ColorTracker {
 	private Scalar color;
 	
 	private List<Rect> myROIs = new ArrayList<Rect>();
-	private List<Obj> objects = new ArrayList<Obj>();
 	
 	//max number of objects to be tracked via this method
 	private final int MAX_NUM_OBJECTS = 7;
@@ -35,14 +32,11 @@ public class ColorTracker {
 	
 	private boolean objectFound = false;
 	private boolean useMorphOps = true;
-	private boolean addGraphics = true;
+	private boolean addGraphics = false;
 	private boolean debug = false;
 	
-	
-	
-	
 	public ColorTracker () {
-		color = new Scalar(0,255,0);
+		setColor(new Scalar(0,255,0));
 		threshold = new Mat();
 	}
 	
@@ -85,7 +79,7 @@ public class ColorTracker {
 		Imgproc.dilate(thresh, thresh, dilateElement);
 	}
 	
-	public void resetMyROIs () {
+	public void resetMyROIs () { //may want to change method name...
 		myROIs.clear();
 	}
 	
@@ -101,7 +95,7 @@ public class ColorTracker {
 		return threshold;
 	}
 	
-	public void trackColor(Mat videoFrame, Mat graphicsFrame) {
+	public void trackColor(Mat videoFrame, Mat graphicsFrame, List<Obj> objects) {
 		Mat hsvFrame = new Mat();
 		Imgproc.cvtColor(videoFrame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 		threshold = new Mat();
@@ -111,10 +105,10 @@ public class ColorTracker {
 			morphOps(threshold);
 		}
 		
-		trackColor1(threshold, graphicsFrame);
+		trackColor1(threshold, graphicsFrame, objects);
 	}
 	
-	public void trackColor1(Mat threshold, Mat graphicsFrame) {
+	public void trackColor1(Mat threshold, Mat graphicsFrame, List<Obj> objects) {
 		Mat temp = new Mat();
 		threshold.copyTo(temp);
 		
@@ -146,6 +140,8 @@ public class ColorTracker {
 					if (nextRect.area() > largestArea) largestArea = nextRect.area();
 					if (nextRect.area() < smallestArea) smallestArea = nextRect.area();
 					myROIs.add(nextRect);
+					Obj nextObj = new Obj(nextRect);
+					objects.add(nextObj);
 					numObjects++;
 				}
 			}
@@ -180,8 +176,11 @@ public class ColorTracker {
 		}
 	}
 
-	public void changeFrame(boolean b) {
-		addGraphics = b;
-		
+	public Scalar getColor() {
+		return color;
+	}
+
+	public void setColor(Scalar color) {
+		this.color = color;
 	}
 }
