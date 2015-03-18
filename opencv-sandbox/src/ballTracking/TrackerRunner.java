@@ -124,6 +124,10 @@ public class TrackerRunner implements ActionListener{
 				
 				window1.getPanel().clearObjects();
 				
+				System.out.println("angle: " + colorBall.angle(4));
+				System.out.println("moving up: " + colorBall.movingUp(4));
+				
+				
 				GraphicsFrame.FRAME++;
 				
 			}//end infinite while loop

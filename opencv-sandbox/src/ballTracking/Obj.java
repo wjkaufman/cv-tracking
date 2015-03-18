@@ -15,6 +15,8 @@ public class Obj {
 	private ArrayList<int[]> movements = new ArrayList<int[]>();
 	private int movementHistory = 25;
 	
+	private boolean debug = true;
+	
 	private Color color;
 	private boolean drawObj = true;
 	
@@ -159,6 +161,28 @@ public class Obj {
 		return b;
 	}
 	
+	public boolean movingUp(int sample) {
+		if (!hasHistory()) return false;
+		
+		if (sample > movements.size()) sample = movements.size();
+		
+		boolean movingUp = movements.get(movements.size() - 1)[1] <
+						   movements.get(movements.size() - sample)[1];
+		
+		return movingUp;
+	}
+	
+	public boolean movingDown(int sample) {
+		if (!hasHistory()) return false;
+		
+		if (sample > movements.size()) sample = movements.size();
+		
+		boolean movingUp = movements.get(movements.size() - 1)[1] >
+						   movements.get(movements.size() - 1 - sample)[1];
+		
+		return movingUp;
+	}
+	
 	/**
 	 * adds current position to movement history
 	 */
@@ -207,7 +231,7 @@ public class Obj {
 		SimpleRegression regression = new SimpleRegression();
 		
 		if (sample > movements.size()) sample = movements.size();
-		for (int i = movements.size(); i > movements.size() - sample; i--) {
+		for (int i = movements.size() - 1; i > movements.size() - sample; i--) {
 			int[] nextPos = movements.get(i);
 			regression.addData(nextPos[0], nextPos[1]);
 		}
@@ -215,6 +239,14 @@ public class Obj {
 		double slope = regression.getSlope();
 		double theta = Math.atan(slope);
 		double angle = Math.toDegrees(theta);
+		
+		if (debug) {
+			System.out.println("in angle, Obj");
+			System.out.println("slope: " + slope);
+			System.out.println("theta: " + theta);
+			System.out.println("angle: " + angle);
+		}
+		
 		return angle;
 	}
 	
