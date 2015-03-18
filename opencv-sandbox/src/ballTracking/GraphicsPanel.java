@@ -362,7 +362,7 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
 			if (endY < 0) endY = 0;
 			
 			updateRectData();
-			setMinMaxHSV(40);
+			setMinMaxHSV(20);
 			printRectData();
 			fireActionPerformed();
 		}

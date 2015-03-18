@@ -2,6 +2,7 @@ package ballTracking;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -12,9 +13,13 @@ public class Obj {
 	
 	private int[] position = new int[4]; //0: x, 1: y, 2: width, 3: height
 	private ArrayList<int[]> movement = new ArrayList<int[]>();
+	private int movementHistory = 20;
 	
 	private Color color;
 	private boolean drawObj = true;
+	
+	private int number;
+	private String objName;
 	
 	public Obj() {
 		position[0] = 0;
@@ -82,6 +87,22 @@ public class Obj {
 		position[3] = height;
 	}
 	
+	public void setNumber(int n) {
+		number = n;
+	}
+	
+	public int getNumber() {
+		return number;
+	}
+	
+	public void setName(String string) {
+		objName = string;
+	}
+	
+	public String getName() {
+		return objName;
+	}
+	
 	public Color getColor() {
 		return color;
 	}
@@ -103,15 +124,21 @@ public class Obj {
 			g.setColor(color);
 			g.drawRect(getX(), getY(), getWidth(), getHeight());
 			
-			int dotsBack = 5;
+			g.drawString("(" + number + ") " + objName, getX(), getY());
+			
+			int dotsBack = 10;
 			int dotSize = 2;
 			
 			if (dotsBack > movement.size()) dotsBack = movement.size();
+			
+			System.out.println("movement size: " + movement.size());
 			
 			if (movement.size() > 0) {
 				for (int i = movement.size() - 1; i > movement.size() - dotsBack; i--) {
 					int[] prevPos = movement.get(i);
 					double[] middle = getMiddle(prevPos);
+					
+					System.out.println(Arrays.toString(middle));
 					
 					g.drawRect((int)middle[0], (int)middle[1], dotSize, dotSize);
 				}
@@ -141,7 +168,9 @@ public class Obj {
 	 */
 	
 	public void addPosition() {
-		movement.add(position);
+		int[] newPosition = Arrays.copyOf(position, position.length);
+		movement.add(newPosition);
+		if (movement.size() > movementHistory) movement.remove(0);
 	}
 	
 	public void addPosition(int x, int y, int width, int height) {
@@ -173,16 +202,16 @@ public class Obj {
 	public double[] getMiddle(int[] position) {
 		double[] middle = new double[2];
 		
-		middle[0] = (position[0] + position[2]) / 2;
-		middle[1] = (position[1] + position[3]) / 2;
+		middle[0] = position[0] + (position[2] / 2);
+		middle[1] = position[1] + (position[3] / 2);
 		
 		return middle;
 	}
 	
 	public double[] getMiddle() {
 		double[] middle = new double[2];
-		middle[0] = (getX() + getWidth()) / 2;
-		middle[1] = (getY() + getHeight()) / 2;
+		middle[0] = getX() + (getWidth() / 2);
+		middle[1] = getY() + (getHeight() / 2);
 		return middle;
 	}
 	

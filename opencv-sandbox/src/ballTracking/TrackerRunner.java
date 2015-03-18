@@ -109,8 +109,9 @@ public class TrackerRunner implements ActionListener{
 				colorBall.addPosition(colorBall.getClosestObj(colorBalls));
 				motionBall.addPosition(motionBall.getClosestObj(motionBalls));
 				
+				window1.getPanel().addObjects(colorBalls);
 				window1.addObject(colorBall);
-				window1.addObject(motionBall);
+//				window1.addObject(motionBall);
 				
 				window1.updateImage(displayFrame);
 				window2.updateImage(colorTracker.getThreshold());
