@@ -31,7 +31,11 @@ public class ColorTracker {
 	
 	
 	private boolean objectFound = false;
+	private boolean track = true;
+	
 	private boolean useMorphOps = true;
+	private int erodeSize = 3, dilateSize = 8;
+	
 	private boolean addGraphics = false;
 	private boolean debug = false;
 	
@@ -60,6 +64,14 @@ public class ColorTracker {
 		V_MAX = h;
 	}
 	
+	public void track(boolean b) {
+		track = b;
+	}
+	
+	public boolean track() {
+		return track;
+	}
+	
 	public boolean useMorphOps() {
 		return useMorphOps;
 	}
@@ -69,8 +81,8 @@ public class ColorTracker {
 	}
 	
 	public void morphOps(Mat thresh) {
-		Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3,3));
-		Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3,3));
+		Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(erodeSize, erodeSize));
+		Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(dilateSize, dilateSize));
 		
 		Imgproc.erode(thresh, thresh, erodeElement);
 		Imgproc.erode(thresh, thresh, erodeElement);
@@ -170,9 +182,7 @@ public class ColorTracker {
 					rectCounter++;
 				}
 			}
-			if (debug) {
-				System.out.println("tracking " + myROIs.size() + " object(s)\n");
-			}
+			if (debug) System.out.println("tracking " + myROIs.size() + " object(s)\n");
 		}
 	}
 

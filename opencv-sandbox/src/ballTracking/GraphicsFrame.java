@@ -57,14 +57,6 @@ public class GraphicsFrame extends JFrame implements ActionListener{
 		return panel.updateImage(image);
 	}
 	
-	public void addObject(Obj object) {
-		panel.addObject(object);
-	}
-	
-	public void addObjects(List<Obj> objects) {
-		panel.addObjects(objects);
-	}
-	
 	public GraphicsPanel getPanel() {
 		return panel;
 	}

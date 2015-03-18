@@ -12,8 +12,8 @@ import org.opencv.core.Rect;
 public class Obj {
 	
 	private int[] position = new int[4]; //0: x, 1: y, 2: width, 3: height
-	private ArrayList<int[]> movement = new ArrayList<int[]>();
-	private int movementHistory = 20;
+	private ArrayList<int[]> movements = new ArrayList<int[]>();
+	private int movementHistory = 25;
 	
 	private Color color;
 	private boolean drawObj = true;
@@ -129,16 +129,12 @@ public class Obj {
 			int dotsBack = 10;
 			int dotSize = 2;
 			
-			if (dotsBack > movement.size()) dotsBack = movement.size();
+			if (dotsBack > movements.size()) dotsBack = movements.size();
 			
-			System.out.println("movement size: " + movement.size());
-			
-			if (movement.size() > 0) {
-				for (int i = movement.size() - 1; i > movement.size() - dotsBack; i--) {
-					int[] prevPos = movement.get(i);
+			if (movements.size() > 0) {
+				for (int i = movements.size() - 1; i > movements.size() - dotsBack; i--) {
+					int[] prevPos = movements.get(i);
 					double[] middle = getMiddle(prevPos);
-					
-					System.out.println(Arrays.toString(middle));
 					
 					g.drawRect((int)middle[0], (int)middle[1], dotSize, dotSize);
 				}
@@ -169,8 +165,8 @@ public class Obj {
 	
 	public void addPosition() {
 		int[] newPosition = Arrays.copyOf(position, position.length);
-		movement.add(newPosition);
-		if (movement.size() > movementHistory) movement.remove(0);
+		movements.add(newPosition);
+		if (movements.size() > movementHistory) movements.remove(0);
 	}
 	
 	public void addPosition(int x, int y, int width, int height) {
@@ -182,10 +178,37 @@ public class Obj {
 		addPosition(obj2.getX(), obj2.getY(), obj2.getWidth(), obj2.getHeight());
 	}
 	
+	public void transitionTo(Obj obj2, int weight) {
+		int x = (getX() + obj2.getX() * weight) / (weight + 1),
+			y = (getY() + obj2.getY() * weight) / (weight + 1),
+			width = (getWidth() + obj2.getWidth() * weight) / (weight + 1),
+			height = (getHeight() + obj2.getHeight() * weight) / (weight + 1);
+		
+		addPosition(x, y, width, height);
+	}
+	
+	public void transitionTo(Obj obj2) {
+		transitionTo(obj2, 1);
+	}
+	
+	public boolean hasHistory() {
+		return movements.size() > 0;
+	}
+	
+	/**
+	 * determines the angle of trajectory of the object from the
+	 * linear regression of the past samples
+	 * @param sample number of previous positions that will be sampled to determine angle
+	 * @return angle of trajectory of object
+	 */
+	
 	public double angle(int sample) {
+		if (!hasHistory()) return -1;
 		SimpleRegression regression = new SimpleRegression();
-		for (int i = movement.size(); i > movement.size() - sample; i--) {
-			int[] nextPos = movement.get(i);
+		
+		if (sample > movements.size()) sample = movements.size();
+		for (int i = movements.size(); i > movements.size() - sample; i--) {
+			int[] nextPos = movements.get(i);
 			regression.addData(nextPos[0], nextPos[1]);
 		}
 		
@@ -236,7 +259,8 @@ public class Obj {
 	}
 	
 	public String toString() {
-		String string = "object: (" + getX() + ", " + getY() + "), width: " + getWidth() + ", height: " + getHeight();
+		String string = "object: (" + getX() + ", " + getY() + "), width: " +
+								  getWidth() + ", height: " + getHeight();
 		return string;
 	}
 	

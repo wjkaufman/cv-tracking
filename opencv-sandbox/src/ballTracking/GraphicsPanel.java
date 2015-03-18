@@ -26,6 +26,8 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      private static final long serialVersionUID = 1L;
      private BufferedImage image;
      
+     private boolean debug = false;
+     
      List<Obj> objects;
      
      private int startX;
@@ -242,12 +244,11 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      }
      
      public void printRect() {
-    	 
     	 System.out.println(getRectAsString());
      }
      
      public void updateRectData() {
-    	 System.out.println("update rect data");
+    	 if (debug) System.out.println("update rect data");
     	 updateRect();
     	 
     	 updateMinHSV();
@@ -338,7 +339,7 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
-		System.out.println("mouse pressed");
+		if (debug) System.out.println("mouse pressed");
 		drawRect = true;
 		startX = e.getX();
 		startY = e.getY();
@@ -351,8 +352,7 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
-		System.out.println("mouse released");
+		if (debug) System.out.println("mouse released");
 		drawRect = false;
 		endX = e.getX();
 		endY = e.getY();
@@ -362,8 +362,8 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
 			if (endY < 0) endY = 0;
 			
 			updateRectData();
-			setMinMaxHSV(20);
-			printRectData();
+			setMinMaxHSV(40);
+			if (debug) printRectData();
 			fireActionPerformed();
 		}
 	}

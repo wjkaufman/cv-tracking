@@ -26,6 +26,8 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	
 	private boolean reactStateChanged = true;
 	
+	private boolean debug = false;
+	
 	private float h;
 	private float s;
 	private float v;
@@ -117,7 +119,7 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	}
 	
 	public void setHSV(float[] hsv) {
-		System.out.println("\n\nsetHSV array: " + Arrays.toString(hsv));
+		if (debug) System.out.println("\n\nsetHSV array: " + Arrays.toString(hsv));
 		h = hsv[0];
 		s = hsv[1];
 		v = hsv[2];
@@ -126,7 +128,7 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	}
 	
 	public void updateFrame() {
-		System.out.println("\n" + h + " " + s + " " + v);
+		if (debug) System.out.println("\n" + h + " " + s + " " + v);
 		reactStateChanged = false;
 		h_slider.setValue((int)h);
 		s_slider.setValue((int)s);
@@ -142,7 +144,7 @@ public class HSVFrame extends JFrame implements ActionListener, ChangeListener {
 	}
 	
 	public void stateChanged(ChangeEvent e) {
-//		System.out.println("state changed in HSVFrame");
+		if (debug) System.out.println("state changed in HSVFrame");
 		//the problem is here!!!
 		if (reactStateChanged) {
 			h = h_slider.getValue();

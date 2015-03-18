@@ -12,6 +12,8 @@ import org.opencv.highgui.VideoCapture;
 
 public class TrackerRunner implements ActionListener{
 	
+	private boolean debug = false;
+	
 	GraphicsFrame window1;
 	GraphicsFrame window2;
 	GraphicsFrame window3;
@@ -60,7 +62,6 @@ public class TrackerRunner implements ActionListener{
 		
 		colorBall = new Obj();
 		motionBall = new Obj();
-		motionBall.drawObj(false);
 		
 		colorBall.setColor(new Color(0,255,0));
 		motionBall.setColor(new Color(255,0,0));
@@ -101,25 +102,27 @@ public class TrackerRunner implements ActionListener{
 				capture.read(videoFrame2);
 				videoFrame1.copyTo(displayFrame);
 				
-				if (true) { //change to "if tracking is on"
+				if (colorTracker.track()) { //change to "if tracking is on"
 					colorTracker.trackColor(videoFrame1, displayFrame, colorBalls);
+				}
+				if (motionTracker.track()) {
 					motionTracker.trackMotion(videoFrame1, videoFrame2, displayFrame, motionBalls);
 				}
 				
-				colorBall.addPosition(colorBall.getClosestObj(colorBalls));
-				motionBall.addPosition(motionBall.getClosestObj(motionBalls));
+				colorBall.transitionTo(colorBall.getClosestObj(colorBalls), 8);
+				motionBall.transitionTo(motionBall.getClosestObj(motionBalls), 8);
 				
 				window1.getPanel().addObjects(colorBalls);
-				window1.addObject(colorBall);
-//				window1.addObject(motionBall);
+//				window1.getPanel().addObjects(motionBalls);
+				
+				window1.getPanel().addObject(colorBall);
+//				window1.getPanel().addObject(motionBall);
 				
 				window1.updateImage(displayFrame);
 				window2.updateImage(colorTracker.getThreshold());
 				window3.updateImage(motionTracker.getThreshold());
 				
 				window1.getPanel().clearObjects();
-				
-				colorBall.printData();
 				
 				GraphicsFrame.FRAME++;
 				
@@ -152,8 +155,7 @@ public class TrackerRunner implements ActionListener{
 			try {
 				hsv_min.setHSV(((GraphicsPanel) event.getSource()).getMinHSV());
 				hsv_max.setHSV(((GraphicsPanel) event.getSource()).getMaxHSV());
-				System.out.println("\n\n");
-				((GraphicsPanel)(event.getSource())).printRectData();
+				if (debug) ((GraphicsPanel)(event.getSource())).printRectData();
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
