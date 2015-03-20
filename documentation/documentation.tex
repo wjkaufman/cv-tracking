@@ -7,6 +7,9 @@
 \author{Will Kaufman}
 \maketitle
 
+\section{Objective of the Project and Rationale}
+This project aimed to assist in the development of the shooting skill in the game of basketball.  The arc of a shot must be in a specific range to maximize the area of the rim while using as little effort as possible.  This solution passively tracks the angle of trajectory of each shot which will allow immediate and objective results during training.  Color and motion tracking are both quick and relatively effective algorithms at recognizing and tracking objects.
+
 \section{Record of Tasks}
 The following is a general chronology of the development of this project.  For a more thorough delineation of the project, take a look at the commit history on the GitHub page.
 
@@ -25,11 +28,8 @@ Once the trackers finish processing the data, the runner processes the list of p
 
 For the GUI, there are several windows that allow for user input and relay information about the object tracking.  The primary window is the live graphics window in which the video stream is displayed with bounding rectangles around the objects being tracked.  There are two other graphics windows that display the black and white threshold images for both the motion tracking and color tracking.  In these threshold windows, the white pixels demonstrate areas of interest for the tracker, which are then grouped into sets of pixels and bounded by a ``region of interest" rectangle.  Two other windows are used for user input for the color tracker.  Each window has three sliders that allow users to control the minimum and maximum hue, saturation, and value (HSV, also known as HSB for brightness instead of value) for the objects being tracked.  For ease of use, the user may also click and drag on the video stream window to select a range of pixel values, but the HSV windows are useful to fine-tune the color tracker.
 
-\section{Rationale}
-This project aimed to assist in the development of the shooting skill in the game of basketball.  The arc of a shot must be in a specific range to maximize the area of the rim while using as little effort as possible.  This solution passively tracks the angle of trajectory of each shot which will allow immediate and objective results during training.  Color and motion tracking are both quick and relatively effective algorithms at recognizing and tracking objects.
-
 \section{Development}
-This project uses the OpenCV library and many of its image-processing capabilities.
+This project uses the OpenCV library and many of its image-processing capabilities.  Most of the interesting algorithms used in the project are centered around the tracking capabilities.  For both trackers, a threshold image is calculated from input images.  In the color tracker, each pixel is checked to see if it falls within the minimum and maximum HSV values set by the user.  In the motion tracker, two frames are analyzed to see if the change in pixels between the frames is larger than the preset sensitivity value.  Once the important pixels are determined, the tracker then traces around each group of important pixels.
 
 \section{Further Development}
 This project was a fantastic introduction into computer vision and the massive capabilities machines have for processing visual information.  Several other types of algorithms, such as speeded up robust features (SUFR) hough transforms may also improve the accuracy of the object tracking.  In addition, adding the capability for the program to ``learn" what the object looks like over time may be a useful direction to take the project.
