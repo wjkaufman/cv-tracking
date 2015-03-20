@@ -1,4 +1,6 @@
 *.DS_Store
 *.mov
 *.MOV
-
+documentation/*
+opencv-sandbox/*
+other/*
