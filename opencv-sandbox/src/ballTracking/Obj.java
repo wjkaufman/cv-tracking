@@ -16,6 +16,11 @@ public class Obj {
 	private int movementHistory = 25;
 	
 	private boolean debug = true;
+	private boolean wasMovingUp = false;
+	
+	private double maxAngle; //implement things here, in movingUp and movingDown
+	
+	private List<Double> maxAngles = new ArrayList<Double>();
 	
 	private Color color;
 	private boolean drawObj = true;
@@ -24,26 +29,46 @@ public class Obj {
 	private String objName;
 	
 	public Obj() {
-		position[0] = 0;
-		position[1] = 0;
-		position[2] = 0;
-		position[3] = 0;
+		setX(0);
+		setY(0);
+		setWidth(0);
+		setHeight(0);
 		
 		color = new Color(0, 255, 0);
 	}
 	
 	public Obj(int x, int y, int width, int height) {
-		position[0] = x;
-		position[1] = y;
-		position[2] = width;
-		position[3] = height;
+		setX(x);
+		setY(y);
+		setWidth(width);
+		setHeight(height);
 	}
 	
 	public Obj(Rect rect) {
-		position[0] = rect.x;
-		position[1] = rect.y;
-		position[2] = rect.width;
-		position[3] = rect.height;
+		setX(rect.x);
+		setY(rect.y);
+		setWidth(rect.width);
+		setHeight(rect.height);
+	}
+	
+	public Obj(Obj obj2) {
+		obj2.copyTo(this);
+	}
+	
+	public void copyTo(Obj obj2) {
+		obj2.setX(getX());
+		obj2.setY(getY());
+		obj2.setWidth(getWidth());
+		obj2.setHeight(getHeight());
+		
+	}
+	
+	public int getMovementHistory() {
+		return movementHistory;
+	}
+	
+	public void setMovementHistory(int mh) {
+		movementHistory = mh;
 	}
 	
 	public int getX() {
@@ -160,22 +185,30 @@ public class Obj {
 		
 		return b;
 	}
-	
+	/**
+	 * checks if the object is moving up (y motion) over sample number of frames
+	 * @param sample number of previous positions to check if it's moving up
+	 * @return true if moving up, false if not moving up
+	 */
 	public boolean movingUp(int sample) {
 		if (!hasHistory()) return false;
 		
-		if (sample > movements.size()) sample = movements.size();
+		if (sample >= movements.size()) sample = movements.size() - 1;
 		
 		boolean movingUp = movements.get(movements.size() - 1)[1] <
-						   movements.get(movements.size() - sample)[1];
+						   movements.get(movements.size() - 1 - sample)[1];
 		
 		return movingUp;
 	}
-	
+	/**
+	 * checks if the object is moving down (y motion) over sample number of frames
+	 * @param sample number of previous positions to check
+	 * @return true if moving up, false if not moving up
+	 */
 	public boolean movingDown(int sample) {
 		if (!hasHistory()) return false;
 		
-		if (sample > movements.size()) sample = movements.size();
+		if (sample > movements.size()) sample = movements.size() - 1;
 		
 		boolean movingUp = movements.get(movements.size() - 1)[1] >
 						   movements.get(movements.size() - 1 - sample)[1];
@@ -186,7 +219,6 @@ public class Obj {
 	/**
 	 * adds current position to movement history
 	 */
-	
 	public void addPosition() {
 		int[] newPosition = Arrays.copyOf(position, position.length);
 		movements.add(newPosition);
@@ -226,12 +258,16 @@ public class Obj {
 	 * @return angle of trajectory of object
 	 */
 	
-	public double angle(int sample) {
+	public double angle(int startSample, int endSample) {
 		if (!hasHistory()) return -1;
 		SimpleRegression regression = new SimpleRegression();
 		
-		if (sample > movements.size()) sample = movements.size();
-		for (int i = movements.size() - 1; i > movements.size() - sample; i--) {
+		if (startSample > movements.size() - 1) startSample = movements.size();
+		if (startSample < 0) startSample = 0;
+		if (endSample > movements.size() - 1) endSample = movements.size();
+		if (endSample < startSample) endSample = startSample;
+		
+		for (int i = startSample; i < endSample; i++) {
 			int[] nextPos = movements.get(i);
 			regression.addData(nextPos[0], nextPos[1]);
 		}
@@ -240,14 +276,39 @@ public class Obj {
 		double theta = Math.atan(slope);
 		double angle = Math.toDegrees(theta);
 		
-		if (debug) {
-			System.out.println("in angle, Obj");
-			System.out.println("slope: " + slope);
-			System.out.println("theta: " + theta);
-			System.out.println("angle: " + angle);
-		}
+//		if (debug) {
+//			System.out.println("in angle, Obj");
+//			System.out.println("slope: " + slope);
+//			System.out.println("theta: " + theta);
+//			System.out.println("angle: " + angle);
+//		}
 		
-		return angle;
+		return Math.abs(angle);
+	}
+	
+	public double angle(int sample) {
+		return angle(movements.size() - sample, movements.size() - 1);
+	}
+	
+	/**
+	 * checks the motion of the object. If it's moving up, it updates the maxAngle
+	 * if it's moving down, it adds the maxAngle to the list of maxAngles, resets the maxAngle
+	 */
+	public void checkAngle() { //***WORK HERE, booleans are weird
+		if (movingUp(2) == wasMovingUp) { //if it's continuing to move up
+			double angle = angle(3);
+			if (angle > maxAngle) maxAngle = angle;
+		}
+		else { //it's beginning to change trajectory
+			if (debug) {
+				System.out.println("changing trajectory");
+				System.out.println(maxAngle);
+			}
+			
+			maxAngles.add(maxAngle);
+			maxAngle = -1;
+		}
+		wasMovingUp = movingUp(2);
 	}
 	
 	public int area() {
@@ -284,7 +345,7 @@ public class Obj {
 				if (nextObj.getDistance(this) < closestObj.getDistance(this)) closestObj = nextObj;
 			}
 		}
-		else closestObj = new Obj();
+		else closestObj = new Obj(this);
 		
 		
 		return closestObj;
