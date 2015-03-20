@@ -205,14 +205,52 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      }
      
      public void setMinMaxHSV(int tolerance) {
-    	 minHSV[0] = Math.abs(averageHSV[0] - tolerance);
-    	 minHSV[1] = Math.abs(averageHSV[1] - tolerance);
-    	 minHSV[2] = Math.abs(averageHSV[2] - tolerance);
+    	 setMinH(averageHSV[0] - tolerance * 4);
+    	 setMinS(averageHSV[1] - tolerance);
+    	 setMinV(averageHSV[2] - tolerance);
     	 
-    	 maxHSV[0] = averageHSV[0] + tolerance;
-    	 maxHSV[1] = averageHSV[1] + tolerance;
-    	 maxHSV[2] = averageHSV[2] + tolerance;
+    	 setMaxH(averageHSV[0] + tolerance * 4);
+    	 setMaxS(averageHSV[1] + tolerance);
+    	 setMaxV(averageHSV[2] + tolerance);
      }
+     
+     public void setMinH(float h) {
+    	 if (h > 360) h = 360;
+    	 else if (h < 0) h = 0;
+    	 minHSV[0] = h;
+     }
+     
+     public void setMinS(float s) {
+    	 if (s > 255) s = 255;
+    	 else if (s < 0) s = 0;
+    	 minHSV[1] = s;
+     }
+     
+     public void setMinV(float v) {
+    	 if (v > 255) v = 255;
+    	 else if (v < 0) v = 0;
+    	 minHSV[2] = v;
+     }
+     
+     public void setMaxH(float h) {
+    	 if (h > 360) h = 360;
+    	 else if (h < 0) h = 0;
+    	 maxHSV[0] = h;
+     }
+     
+     public void setMaxS(float s) {
+    	 if (s > 255) s = 255;
+    	 else if (s < 0) s = 0;
+    	 maxHSV[1] = s;
+     }
+     
+     public void setMaxV(float v) {
+    	 if (v > 255) v = 255;
+    	 else if (v < 0) v = 0;
+    	 maxHSV[2] = v;
+     }
+     
+     
      
      public int[] getRect(int x0, int y0, int x1, int y1) {
     	 int lowerX;

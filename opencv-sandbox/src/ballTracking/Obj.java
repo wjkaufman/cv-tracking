@@ -15,6 +15,8 @@ public class Obj {
 	private ArrayList<int[]> movements = new ArrayList<int[]>();
 	private int movementHistory = 25;
 	
+	private int samplesForMovement = 3;
+	
 	private boolean debug = true;
 	private boolean wasMovingUp = false;
 	
@@ -193,10 +195,11 @@ public class Obj {
 	public boolean movingUp(int sample) {
 		if (!hasHistory()) return false;
 		
-		if (sample >= movements.size()) sample = movements.size() - 1;
+		if (sample > movements.size()) sample = movements.size();
+		int startIndex = movements.size() - 1, endIndex = startIndex - sample + 1;
 		
-		boolean movingUp = movements.get(movements.size() - 1)[1] <
-						   movements.get(movements.size() - 1 - sample)[1];
+		boolean movingUp = movements.get(startIndex)[1] <
+						   movements.get(endIndex)[1];
 		
 		return movingUp;
 	}
@@ -208,10 +211,12 @@ public class Obj {
 	public boolean movingDown(int sample) {
 		if (!hasHistory()) return false;
 		
-		if (sample > movements.size()) sample = movements.size() - 1;
+		if (sample > movements.size()) sample = movements.size();
+		int startIndex = movements.size() - 1, endIndex = startIndex - sample + 1;
 		
-		boolean movingUp = movements.get(movements.size() - 1)[1] >
-						   movements.get(movements.size() - 1 - sample)[1];
+		
+		boolean movingUp = movements.get(startIndex)[1] >
+						   movements.get(endIndex)[1];
 		
 		return movingUp;
 	}
@@ -295,11 +300,11 @@ public class Obj {
 	 * if it's moving down, it adds the maxAngle to the list of maxAngles, resets the maxAngle
 	 */
 	public void checkAngle() { //***WORK HERE, booleans are weird
-		if (movingUp(2) == wasMovingUp) { //if it's continuing to move up
-			double angle = angle(3);
+		if (movingUp(samplesForMovement) && wasMovingUp) { //if it's continuing to move up
+			double angle = angle(5);
 			if (angle > maxAngle) maxAngle = angle;
 		}
-		else { //it's beginning to change trajectory
+		else if (movingDown(samplesForMovement) && wasMovingUp){ //it's beginning to move down
 			if (debug) {
 				System.out.println("changing trajectory");
 				System.out.println(maxAngle);
@@ -308,7 +313,7 @@ public class Obj {
 			maxAngles.add(maxAngle);
 			maxAngle = -1;
 		}
-		wasMovingUp = movingUp(2);
+		wasMovingUp = movingUp(samplesForMovement);
 	}
 	
 	public int area() {
