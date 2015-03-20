@@ -3,7 +3,7 @@
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="ballTracking.GraphicsFrame" project="opencv-sandbox" 
     file="/opencv-sandbox/src/ballTracking/GraphicsFrame.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="160" y="302"/>    
+    <position height="-1" width="-1" x="149" y="221"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,7 +30,7 @@
   </class>  
   <class id="4" language="java" name="ballTracking.GraphicsPanel" project="opencv-sandbox" 
     file="/opencv-sandbox/src/ballTracking/GraphicsPanel.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="146" y="1194"/>    
+    <position height="-1" width="-1" x="141" y="1044"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -39,7 +39,7 @@
   </class>  
   <class id="5" language="java" name="ballTracking.MotionTracker" project="opencv-sandbox" 
     file="/opencv-sandbox/src/ballTracking/MotionTracker.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="530" width="244" x="357" y="337"/>    
+    <position height="-1" width="-1" x="465" y="564"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -48,7 +48,7 @@
   </class>  
   <class id="6" language="java" name="ballTracking.Obj" project="opencv-sandbox" 
     file="/opencv-sandbox/src/ballTracking/Obj.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="458" y="1489"/>    
+    <position height="-1" width="-1" x="412" y="1402"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
