@@ -16,3 +16,8 @@ I'm currently looking at some face-detection example code that I found from this
 * https://www.youtube.com/watch?v=7bpwJtQ65oY
 
 This video was very helpful, especially with seeing how to use opencv in Java.
+
+##To Do
+
+*work on the ball class, actually tracking a ball (end end goal)
+*add superclass for trackers (including thresholds, contours, objs, etc.)

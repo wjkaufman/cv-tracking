@@ -1,7 +1,0 @@
-To do:
-
-work on the ball class, actually tracking a ball (end end goal)
-
-Bigger to do:
-
-add superclass for trackers (including thresholds, contours, objs, etc.)
