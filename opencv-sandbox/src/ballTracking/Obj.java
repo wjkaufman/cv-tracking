@@ -12,6 +12,7 @@ import org.opencv.core.Rect;
 public class Obj {
 	
 	private int[] position = new int[4]; //0: x, 1: y, 2: width, 3: height
+	private double dx, dy;
 	private ArrayList<int[]> movements = new ArrayList<int[]>();
 	private int movementHistory = 25;
 	
@@ -58,10 +59,16 @@ public class Obj {
 	}
 	
 	public void copyTo(Obj obj2) {
-		obj2.setX(getX());
-		obj2.setY(getY());
-		obj2.setWidth(getWidth());
-		obj2.setHeight(getHeight());
+		obj2.setPosition(getPosition());
+		
+		obj2.setColor(getColor());
+		obj2.setMovementHistory(getMovementHistory());
+		obj2.setName(getName());
+		obj2.setNumber(getNumber());
+		
+		obj2.setDX(getDX(3));
+		obj2.setDY(getDY(3));
+		
 		
 	}
 	
@@ -114,6 +121,57 @@ public class Obj {
 		position[1] = y;
 		position[2] = width;
 		position[3] = height;
+	}
+	
+	public void setPosition(int[] position) {
+		this.position = position;
+	}
+	
+	public void updateDX(int sample) {
+		if (movements.size() < 1) {
+			dx = 0;
+			return;
+		}
+		if (sample > movements.size()) sample = movements.size();
+		int start = movements.get(movements.size() - sample)[0],
+			end = movements.get(movements.size() - 1)[0];
+		
+		dx = end - start;
+	}
+	
+	public double getDX(int sample) {
+		updateDX(sample);
+		return dx;
+	}
+	
+	public void setDX(double dx) {
+		this.dx = dx;
+	}
+	
+	public void updateDY(int sample) {
+		if (movements.size() < 1) {
+			dy = 0;
+			return;
+		}
+		if (sample > movements.size()) sample = movements.size();
+		int start = movements.get(movements.size() - sample)[1],
+			end = movements.get(movements.size() - 1)[1];
+		
+		dy = end - start;
+	}
+	
+	public double getDY(int sample) {
+		updateDY(sample);
+		return dy;
+	}
+	
+	public void setDY(double dy) {
+		this.dy = dy;
+	}
+	
+	public void move() {
+		setX(getX() + (int)getDX(3)); //arbitrary sample value given (3)
+		setY(getY() + (int)getDY(3)); //arbitrary sample value given (3)
 	}
 	
 	public void setNumber(int n) {
@@ -352,8 +410,15 @@ public class Obj {
 		}
 		else closestObj = new Obj(this);
 		
-		
 		return closestObj;
+	}
+	
+	public Obj getNextLikelyObj(List<Obj> objects) {
+		Obj likelyObj = new Obj(this), closestObj;
+		
+		likelyObj.move(); //moves object to where it will likely be
+		
+		return likelyObj.getClosestObj(objects);
 	}
 	
 	public String toString() {

@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import org.opencv.core.Mat;
 
 public class GraphicsFrame extends JFrame implements ActionListener{
-	private int frameWidth = 600, frameHeight = 400;
+	private int frameWidth = 640, frameHeight = 360;
 	private double captureScale = 1;
 	public static int FRAME = 0;
 	

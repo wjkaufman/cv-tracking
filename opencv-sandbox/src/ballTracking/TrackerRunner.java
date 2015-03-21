@@ -72,69 +72,73 @@ public class TrackerRunner implements ActionListener{
 		hsvFrame = new Mat();
 		threshFrame = new Mat();
 		
-		capture = new VideoCapture(0);
+		capture = new VideoCapture();
 		
 		capture.set(3, window1.getFrameWidth() * window1.getCaptureScale());
 		capture.set(4, window1.getFrameHeight() * window1.getCaptureScale());
 	}
 	
 	public void start() {
-		if (capture.isOpened()) {
-			try {
-				Thread.sleep(500);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+		while (true) {
+			capture.open("video/video.mp4");
 			
-			while (true) {
-				colorBalls.clear();
-				motionBalls.clear();
-				
-				capture.read(videoFrame1);
-				
+			if (capture.isOpened()) {
 				try {
-					Thread.sleep(20);
-				} catch (InterruptedException e) {
+					Thread.sleep(500);
+				}
+				catch (Exception e) {
 					e.printStackTrace();
 				}
 				
-				capture.read(videoFrame2);
-				videoFrame1.copyTo(displayFrame);
-				
-				if (colorTracker.track()) { //change to "if tracking is on"
-					colorTracker.trackColor(videoFrame1, displayFrame, colorBalls);
-				}
-				if (motionTracker.track()) {
-					motionTracker.trackMotion(videoFrame1, videoFrame2, displayFrame, motionBalls);
-				}
-				
-				colorBall.transitionTo(colorBall.getClosestObj(colorBalls), 8);
-				motionBall.transitionTo(motionBall.getClosestObj(motionBalls), 8);
-				
-				window1.getPanel().addObjects(colorBalls);
-//				window1.getPanel().addObjects(motionBalls);
-				
-				window1.getPanel().addObject(colorBall);
-//				window1.getPanel().addObject(motionBall);
-				
-				window1.updateImage(displayFrame);
-				window2.updateImage(colorTracker.getThreshold());
-				window3.updateImage(motionTracker.getThreshold());
-				
-				window1.getPanel().clearObjects();
-				
-				colorBall.checkAngle();
-				
-				GraphicsFrame.FRAME++;
-				
-			}//end infinite while loop
-		}//end if capture is opened
-		
-		else {
-			System.out.println("Problem initializing videocapture");
-		}
-	}
+				while (capture.get(1) < capture.get(7) - 2) {
+					colorBalls.clear();
+					motionBalls.clear();
+					
+					capture.read(videoFrame1);
+					
+					try {
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+					capture.read(videoFrame2);
+					videoFrame1.copyTo(displayFrame);
+					
+					if (colorTracker.track()) { //change to "if tracking is on"
+						colorTracker.trackColor(videoFrame1, displayFrame, colorBalls);
+					}
+					if (motionTracker.track()) {
+						motionTracker.trackMotion(videoFrame1, videoFrame2, displayFrame, motionBalls);
+					}
+					
+					colorBall.transitionTo(colorBall.getNextLikelyObj(colorBalls), 8);
+					motionBall.transitionTo(motionBall.getNextLikelyObj(motionBalls), 8);
+					
+//					window1.getPanel().addObjects(colorBalls);
+					window1.getPanel().addObjects(motionBalls);
+					
+					window1.getPanel().addObject(colorBall);
+					window1.getPanel().addObject(motionBall);
+					
+					window1.updateImage(displayFrame);
+					window2.updateImage(colorTracker.getThreshold());
+					window3.updateImage(motionTracker.getThreshold());
+					
+					window1.getPanel().clearObjects();
+					
+//					colorBall.checkAngle();
+					motionBall.checkAngle();
+					
+					GraphicsFrame.FRAME++;
+				}//video completed
+			}
+			
+			else {
+				System.out.println("Problem initializing videocapture");
+			}
+		}//end infinite while loop
+		}//end setup
 	
 	public static void main(String arg[]) {
 		
