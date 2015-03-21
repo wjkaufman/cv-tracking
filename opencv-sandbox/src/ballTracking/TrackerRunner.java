@@ -64,7 +64,9 @@ public class TrackerRunner implements ActionListener{
 		motionBall = new Obj();
 		
 		colorBall.setColor(new Color(0,255,0));
+		colorBall.setName("color");
 		motionBall.setColor(new Color(255,0,0));
+		motionBall.setName("motion");
 		
 		videoFrame1 = new Mat();
 		videoFrame2 = new Mat();
@@ -80,7 +82,8 @@ public class TrackerRunner implements ActionListener{
 	
 	public void start() {
 		while (true) {
-			capture.open("video/video.mp4");
+			GraphicsFrame.FRAME = 0;
+			capture.open("video/video2.mp4");
 			
 			if (capture.isOpened()) {
 				try {
@@ -115,10 +118,10 @@ public class TrackerRunner implements ActionListener{
 					colorBall.transitionTo(colorBall.getNextLikelyObj(colorBalls), 8);
 					motionBall.transitionTo(motionBall.getNextLikelyObj(motionBalls), 8);
 					
-//					window1.getPanel().addObjects(colorBalls);
+					window1.getPanel().addObjects(colorBalls);
 					window1.getPanel().addObjects(motionBalls);
 					
-					window1.getPanel().addObject(colorBall);
+//					window1.getPanel().addObject(colorBall);
 					window1.getPanel().addObject(motionBall);
 					
 					window1.updateImage(displayFrame);

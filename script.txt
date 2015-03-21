@@ -1,0 +1,9 @@
+For my independent project in Computer Science, I decided to create an object-tracking program using the OpenCV library.  This program can be used to calculate the arc of a shot for working on shooting skills for the game of basketball.  I'm going to show you how the program functions.
+
+I currently have the program running in a continuous loop on some footage I shot earlier, but the program does just as well with live footage from a webcam.  What you can see are three windows, one with a video feed with object bounding rectangles of the tracked objects, and two with threshold images that display what the computer is processing to find the objects.  The top right window is the motion tracker, and the bottom right window is the color tracker.  The program analyzes a list of potential objects from both the motion tracker and the color tracker and decides the most likely position of the object, given the previous position and velocity of the object.
+
+The two slider windows to the left are used to fine-tune the color tracker and select only the object that the program wishes to track.
+
+As the object is being tracked, statistics are calculated based on the trajectory of the ball.  Once the ball has reached its peak height, the program calculates the angle of the shot, that can be read in the console.
+
+Thanks for watching!
