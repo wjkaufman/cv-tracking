@@ -13,8 +13,8 @@ import javax.swing.JFrame;
 import org.opencv.core.Mat;
 
 public class GraphicsFrame extends JFrame implements ActionListener{
-	public static final int WIDTH = 600, HEIGHT = 400;
-	public static final double CAPTURE_SCALE = 1;
+	private int frameWidth = 600, frameHeight = 400;
+	private double captureScale = 1;
 	public static int FRAME = 0;
 	
 	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
@@ -43,14 +43,38 @@ public class GraphicsFrame extends JFrame implements ActionListener{
 	public void setup() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setBackground(Color.BLACK);
-		this.setSize(WIDTH, HEIGHT);
+		this.setSize(frameWidth, frameHeight);
 		
-		panel = new GraphicsPanel();
+		panel = new GraphicsPanel(this);
 		panel.addActionListener(this);
 		
 		this.add(panel);
 		
 		this.setVisible(true);
+	}
+	
+	public double getCaptureScale() {
+		return captureScale;
+	}
+	
+	public void setCaptureScale(double scale) {
+		captureScale = scale;
+	}
+	
+	public int getFrameWidth() {
+		return frameWidth;
+	}
+	
+	public int getFrameHeight() {
+		return frameHeight;
+	}
+	
+	public void setFrameWidth(int width) {
+		this.frameWidth = width;
+	}
+
+	public void setFrameHeight(int height) {
+		this.frameHeight = height;
 	}
 	
 	public boolean updateImage(Mat image) {

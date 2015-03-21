@@ -18,8 +18,8 @@ public class MotionTracker {
 	private boolean useMorphOps = true;
 	private int erodeSize = 3, dilateSize = 8;
 	
-	private int MIN_OBJECT_AREA = 500;
-	private int MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT / 2;
+	private int MIN_OBJECT_AREA = 100;
+	private int MAX_OBJECT_AREA = 300000;
 	
 	private Mat difference, threshold;
 	
@@ -149,8 +149,8 @@ public class MotionTracker {
 					double y = boundingRect.y + boundingRect.height / 2;
 					
 					Core.putText(cameraFeed, "tracking object: " + rectCounter, new Point(x,y), 2,
-							 .67 * GraphicsFrame.CAPTURE_SCALE, color,
-							 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
+							 .67, color,
+							 (int)(2));
 					
 					Core.rectangle(cameraFeed, new Point(boundingRect.x, boundingRect.y),
 							   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),

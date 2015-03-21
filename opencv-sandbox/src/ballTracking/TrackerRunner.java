@@ -74,8 +74,8 @@ public class TrackerRunner implements ActionListener{
 		
 		capture = new VideoCapture(0);
 		
-		capture.set(3, GraphicsFrame.WIDTH * GraphicsFrame.CAPTURE_SCALE);
-		capture.set(4, GraphicsFrame.HEIGHT * GraphicsFrame.CAPTURE_SCALE);
+		capture.set(3, window1.getFrameWidth() * window1.getCaptureScale());
+		capture.set(4, window1.getFrameHeight() * window1.getCaptureScale());
 	}
 	
 	public void start() {

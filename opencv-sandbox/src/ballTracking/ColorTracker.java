@@ -27,7 +27,7 @@ public class ColorTracker {
 	private final int MAX_NUM_OBJECTS = 7;
 	//min and max object area to be tracked
 	private final double MIN_OBJECT_AREA = 20;
-	private final double MAX_OBJECT_AREA = GraphicsFrame.WIDTH * GraphicsFrame.HEIGHT;
+	private final double MAX_OBJECT_AREA = 300000;
 	
 	
 	private boolean objectFound = false;
@@ -173,8 +173,8 @@ public class ColorTracker {
 					double y = boundingRect.y + boundingRect.height / 2;
 					
 					Core.putText(graphicsFrame, "tracking object: " + rectCounter, new Point(x,y), 2,
-							 .67 * GraphicsFrame.CAPTURE_SCALE, new Scalar(0,255,0),
-							 (int)(2 * GraphicsFrame.CAPTURE_SCALE));
+							 .67, new Scalar(0,255,0),
+							 (int)(2));
 					
 					Core.rectangle(graphicsFrame, new Point(boundingRect.x, boundingRect.y),
 							   	   new Point(boundingRect.x + boundingRect.width, boundingRect.y + boundingRect.height),

@@ -28,6 +28,8 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      
      private boolean debug = false;
      
+     private GraphicsFrame parentFrame;
+     
      List<Obj> objects;
      
      private int startX;
@@ -47,11 +49,20 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
      // Create a constructor method
      public GraphicsPanel(){
           super();
+          setup();
           
-          objects = new ArrayList<Obj>();
-          
-          this.addMouseListener(this);
-          this.addMouseMotionListener(this);
+     }
+     
+     public GraphicsPanel(GraphicsFrame parentFrame) {
+    	 this.parentFrame = parentFrame;
+    	 setup();
+     }
+     
+     public void setup() {
+    	 objects = new ArrayList<Obj>();
+         
+         this.addMouseListener(this);
+         this.addMouseMotionListener(this);
      }
      
      /*
@@ -321,7 +332,7 @@ class GraphicsPanel extends JPanel implements ActionListener, MouseListener, Mou
           super.paintComponent(g);
           if (this.image==null) return;
         
-          g.drawImage(this.image, 0, 0, GraphicsFrame.WIDTH, GraphicsFrame.HEIGHT, null);
+          g.drawImage(this.image, 0, 0, parentFrame.getFrameWidth(), parentFrame.getFrameHeight(), null);
           g.setColor(Color.WHITE);
           g.setFont(new Font("", 0, 20));
           g.drawString("Frame: " + GraphicsFrame.FRAME, 50, 50);
