@@ -10,7 +10,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.highgui.VideoCapture;
 
-public class TrackerRunner implements ActionListener{
+public class TrackerVideoRunner implements ActionListener{
 	
 	private boolean debug = false;
 	
@@ -37,7 +37,7 @@ public class TrackerRunner implements ActionListener{
 	
 	VideoCapture capture;
 	
-	public TrackerRunner() {
+	public TrackerVideoRunner() {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
 		//make the JFrame
@@ -145,7 +145,7 @@ public class TrackerRunner implements ActionListener{
 	
 	public static void main(String arg[]) {
 		
-		TrackerRunner runner = new TrackerRunner();
+		TrackerVideoRunner runner = new TrackerVideoRunner();
 		runner.start();
 		
 	}
