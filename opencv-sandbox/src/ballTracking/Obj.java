@@ -15,7 +15,7 @@ public class Obj {
 	private ArrayList<int[]> movements = new ArrayList<int[]>();
 	private int movementHistory = 25;
 	
-	private int samplesForMovement = 3;
+	private int samplesForMovement = 5, samplesForAngle = 10;
 	
 	private boolean debug = true;
 	private boolean wasMovingUp = false;
@@ -301,7 +301,7 @@ public class Obj {
 	 */
 	public void checkAngle() { //***WORK HERE, booleans are weird
 		if (movingUp(samplesForMovement) && wasMovingUp) { //if it's continuing to move up
-			double angle = angle(5);
+			double angle = angle(samplesForAngle);
 			if (angle > maxAngle) maxAngle = angle;
 		}
 		else if (movingDown(samplesForMovement) && wasMovingUp){ //it's beginning to move down
