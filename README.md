@@ -1,4 +1,4 @@
-# opencv-sandbox
+# CV Tracking
 Java implementation of the opencv library.  Trying to learn by messing around, so this is what it is!
 
 These java classes use opencv (http://opencv.org/).
@@ -17,7 +17,7 @@ I'm currently looking at some face-detection example code that I found from this
 
 This video was very helpful, especially with seeing how to use opencv in Java.
 
-##To Do
+## To Do
 
-*work on the ball class, actually tracking a ball (end end goal)
-*add superclass for trackers (including thresholds, contours, objs, etc.)
+* work on the ball class, actually tracking a ball (end end goal)
+* add superclass for trackers (including thresholds, contours, objs, etc.)
